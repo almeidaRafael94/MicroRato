@@ -5,10 +5,9 @@
 #define Velocidade 100 // Testar amanha!!
 
 
-//int ledID = 0;    /* Led 1 de funcionamento*/
-//int ledID1 = 1;   /* Led 2 de andar em frante */
-//int ledID2 = 2;   /* Led 3 de rotacao em si proprio */
-int ledID3 = 3;   /* Led 4 quando tem de virar para um dos lados */
+
+
+
 int sensor_dir,sensor_esq,sensor_frente; 
 int estado=0;     /* 0 = parado; 1 = a trabalhar */
 int linha = 0;
@@ -17,7 +16,7 @@ int reset = 0;
 int a_s_dir[3]= {0, 0, 0};
 int a_s_esq[3]= {0, 0, 0};
 int a_s_frente[3]= {0, 0, 0};
-
+int seg=0;	
 
 /********************************************/
 // FUNCTIONS
@@ -29,13 +28,12 @@ void Vira_Dir (void);
 void Rodar_Sobre_Si (void);
 void andar_frente (void);
 void Vira_esq (void);
-void Fim (void);
-void farol(void);
+void Chegada_Farol (void);
+void Ver_Farol(void);
 void ANDAR1(void);
 void ANDAR2(void);
-void ANDAR3(void);
 void Sensor(void);
-
+void Fim(void);  
 /********************************************/
 int main (void)
 {
@@ -47,31 +45,37 @@ int main (void)
 	printStr("\n");
 	
 
+//desligar os leds para o inicio
+	resetLed(0);
+	resetLed(1);
+	resetLed(2);
+	resetLed(3);
+
   while (TRUE)
     {
 	
 	
-	Fim();
-	//leitura os sensores
-	if ( readCoreTimer() > 2000000*180)
-   	 {
-		stopMotors();
-		setLed(1);
 	
-
+	
+	if ( readCoreTimer() >= 20000000)
+   	 {
+		seg++;
+		if(seg>=180){
+			Fim();
+		}
+	
 	}
 
-	Sensor();
-	
-
-	
+	Sensor(); 	 //leitura os sensores
 	printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
+
 
 	//botao de estado 
 
 	if(startButton() == 1) // Botao start(preto) primido
 	{
 		estado = 1;
+		resetCoreTimer();
 	}
 	else if(stopButton() == 1) //Botao stop(vermelho) primido
 	{
@@ -81,20 +85,9 @@ int main (void)
  	//funcoa de funcionameneto
 	if(estado == 1) // robot fica em presesamento
 	{
-		//setLed(ledID);// led que indica que o robot esta a funcionar
-		if(reset ==0 ){
-		resetCoreTimer();
-		reset = 1;
-		}
-		resetLed(ledID3);
-		farol();		
-			
-		//setVel2(Velocidade,Velocidade); // inicia movimento
-
+		Ver_Farol();		
 		ANDAR2();
-
-			
-/*************************************************************/
+		
 	}
 	//quando e primido o botao stop
 	else if(stopButton() == 1)		// deslica o funcionamento, nenhum led activo
@@ -107,55 +100,57 @@ int main (void)
     }
   return (0);
 }
-
-void Stop_robot()
+//################3
+void Stop_robot()  //serve para quando se carrega no botao de desligar
 {
-	//resetLed(ledID);	// desliga o led de funcionamento
 	stopMotors();		// desliga os metores
 	estado = 0;
 }
-
+//################3
 void Ajusta_Esq ()
 {
 	setVel2 (Velocidade-20,Velocidade);
 }
-
+//################3
 void Ajusta_Dir ()
 {
 	setVel2 (Velocidade,Velocidade-20);
 }
-
+//################3
 void Vira_Dir ()
 {
 	setVel2 (Velocidade-40, Velocidade); // ALTERAR ISTO
 }
+//################3
 void Vira_esq ()
 {
 	setVel2 (Velocidade, Velocidade-40); // ALTERAR ISTO
 }
+//################3
 void andar_frente ()
 {
 	setVel2 (Velocidade, Velocidade); // ALTERAR ISTO
 }
+//################3
 void Rodar_Sobre_Si ()
 {
 	setVel2 (Velocidade, -Velocidade);
 }
-
-void Fim ()
+//################3
+void Chegada_Farol ()
 {
 	
 	if (lineSensor(LINE_SENSOR_LEFT1) == 1 ||lineSensor(LINE_SENSOR_CENTER) == 1 || lineSensor(LINE_SENSOR_RIGHT1) == 1 || lineSensor(LINE_SENSOR_RIGHT2) == 1)
 	{	
 		wait(2); //para se ver melhor depois
 		Stop_robot();
-		setLed(ledID3);
 		estado = 0;
-		printf("Chegei ao farol  CARALHO!!!!!!!!!!!!!!!!!\n\n");
+		printf("Cheguei ao farol  CARALHO!!!!!!!!!!!!!!!!!\n\n");
 	}
 	
 }
-void farol()
+//################3
+void Ver_Farol()
 {	
 	setServoPos(0);
 	readSensors(); 
@@ -165,7 +160,7 @@ void farol()
 	}
 	
 }
-
+//################3
 void ANDAR1 ()
 {
 		if(sensor_dir < LIMIAR && sensor_frente < LIMIAR && sensor_esq < LIMIAR )
@@ -189,7 +184,7 @@ void ANDAR1 ()
 		}
 
 }
-
+//################3
 void ANDAR2 ()
 {
 	if(sensor_dir < LIMIAR)
@@ -219,34 +214,20 @@ void ANDAR2 ()
 
 }
 
-
-void ANDAR3 ()
-{
-	if(sensor_dir < LIMIAR)
-	{
-		Vira_Dir();
-		
-	}
-	if(sensor_esq > LIMIAR)
-	{
-		Vira_esq();
-		
-	}
-}
-
+//################3
 void Sensor()
 {
 	int sum_dir=0, sum_esq=0, sum_frente=0;
 
 	
-	/*int i=0;
-	for(i=0; i<3, i++){*/
-		a_s_dir[1]=a_s_dir[2];
-		a_s_esq[1]=a_s_esq[2];
-		a_s_frente[1]=a_s_frente[2];
+	int i=0;
+	for( i=0; i<2; i++){
+		a_s_dir[i]=a_s_dir[i+1];
+		a_s_esq[i]=a_s_esq[i+1];
+		a_s_frente[i]=a_s_frente[i+1];
 		
 	
-
+	}
 
 	disableObstSens();
 	disableLineSens();
@@ -255,16 +236,19 @@ void Sensor()
 		
 	readSensors();  
 	
-	a_s_dir[3] = obstacleSensor(OBST_SENSOR_RIGHT);
-	a_s_esq[3] = obstacleSensor(OBST_SENSOR_LEFT);
-	a_s_frente[3]= obstacleSensor(OBST_SENSOR_FRONT);
+	a_s_dir[2] = obstacleSensor(OBST_SENSOR_RIGHT);
+	a_s_esq[2] = obstacleSensor(OBST_SENSOR_LEFT);
+	a_s_frente[2]= obstacleSensor(OBST_SENSOR_FRONT);
+	
+
 	linha = lineSensor(LINE_SENSOR_CENTER);
+	Chegada_Farol(); //verificao da chegada ao farol
 	farolsen = readBeaconSens();
 
 	
-	sum_dir= a_s_dir[1] + a_s_dir[2] + a_s_dir[3]; 
-	sum_esq= a_s_esq[1] + a_s_esq[2] + a_s_esq[3]; 
-	sum_frente= a_s_frente[1] + a_s_frente[2] + a_s_frente[3]; 
+	sum_dir= a_s_dir[0] + a_s_dir[1] + a_s_dir[2]; 
+	sum_esq= a_s_esq[0] + a_s_esq[1] + a_s_esq[2]; 
+	sum_frente= a_s_frente[0] + a_s_frente[1] + a_s_frente[1]; 
 
 
 	sensor_esq = sum_dir/3;
@@ -273,6 +257,27 @@ void Sensor()
 
 
 
+
+}
+//######################################################################################################################################################33
+/* esta funçao serve para mostrar que robô dê a sua prova por concluída, tendo ou não atingido objetivo.
+*Para isso os led devem permanecer intermitente, com uma frequência compreendida entre 1 e 5 Hz*/
+void Fim(){
+
+	stopMotors();
+	//esta a frequencia 1hz
+	while(TRUE){
+		setLed(0);
+		setLed(1);
+		setLed(2);
+		setLed(3);
+		wait(1000);
+		resetLed(0);
+		resetLed(1);
+		resetLed(2);
+		resetLed(3);
+		wait(1000);
+	}
 
 }
 
