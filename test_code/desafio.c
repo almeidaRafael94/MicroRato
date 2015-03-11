@@ -34,6 +34,7 @@ void ANDAR1(void);
 void ANDAR2(void);
 void Sensor(void);
 void Fim(void);  
+void TimeOut(void)
 /********************************************/
 int main (void)
 {
@@ -55,16 +56,7 @@ int main (void)
     {
 	
 	
-	
-	
-	if ( readCoreTimer() >= 20000000)
-   	 {
-		seg++;
-		if(seg>=180){
-			Fim();
-		}
-	
-	}
+	TimeOut();
 
 	Sensor(); 	 //leitura os sensores
 	printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
@@ -280,4 +272,15 @@ void Fim(){
 	}
 
 }
+//############################################################################################################################################################
+void TimeOut(){
 
+	if ( readCoreTimer() >= 20000000)
+		 {
+			seg++;
+			if(seg>=180){
+				Fim();
+			}
+		
+		}
+}
