@@ -34,7 +34,7 @@ void ANDAR1(void);
 void ANDAR2(void);
 void Sensor(void);
 void Fim(void);  
-void TimeOut(void)
+void TimeOut(void);
 /********************************************/
 int main (void)
 {
@@ -233,9 +233,10 @@ void Sensor()
 	a_s_frente[2]= obstacleSensor(OBST_SENSOR_FRONT);
 	
 
-	linha = lineSensor(LINE_SENSOR_CENTER);
-	Chegada_Farol(); //verificao da chegada ao farol
-	farolsen = readBeaconSens();
+	
+	Chegada_Farol(); //verificao da chegada ao farol substitui => linha = lineSensor(LINE_SENSOR_CENTER);
+	Ver_Farol();
+		//farolsen = readBeaconSens();
 
 	
 	sum_dir= a_s_dir[0] + a_s_dir[1] + a_s_dir[2]; 
