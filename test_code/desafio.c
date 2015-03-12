@@ -16,7 +16,7 @@ int reset = 0;
 int a_s_dir[3]= {0, 0, 0};
 int a_s_esq[3]= {0, 0, 0};
 int a_s_frente[3]= {0, 0, 0};
-int seg=0;	
+volatile  int seg=0;	//tempo em funcionamento
 
 /********************************************/
 // FUNCTIONS
@@ -39,7 +39,7 @@ void TimeOut(void);
 int main (void)
 {
 
-  initPIC32 ();
+  	initPIC32 ();
 
 	printStr(__FILE__); // para saber o nome do ficheiro que esta a correr no robot
 	printf("\r    battery: %d ", battery());
@@ -52,14 +52,17 @@ int main (void)
 	resetLed(2);
 	resetLed(3);
 
+
+
   while (TRUE)
     {
 	
 	
-	TimeOut();
+	TimeOut();		// timeOut => tb devia ir para uma inturrupcao
 
-	Sensor(); 	 //leitura os sensores
-	printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
+	Sensor(); 	 //leitura os sensores tem de se por numa interropecao
+
+	
 
 
 	//botao de estado 
@@ -92,7 +95,12 @@ int main (void)
     }
   return (0);
 }
-//################3
+
+
+
+//########################################################################################################################################################################
+/* conficoraçao dos metores*/
+
 void Stop_robot()  //serve para quando se carrega no botao de desligar
 {
 	stopMotors();		// desliga os metores
@@ -128,31 +136,11 @@ void Rodar_Sobre_Si ()
 {
 	setVel2 (Velocidade, -Velocidade);
 }
-//################3
-void Chegada_Farol ()
-{
-	
-	if (lineSensor(LINE_SENSOR_LEFT1) == 1 ||lineSensor(LINE_SENSOR_CENTER) == 1 || lineSensor(LINE_SENSOR_RIGHT1) == 1 || lineSensor(LINE_SENSOR_RIGHT2) == 1)
-	{	
-		wait(2); //para se ver melhor depois
-		Stop_robot();
-		estado = 0;
-		printf("Cheguei ao farol  CARALHO!!!!!!!!!!!!!!!!!\n\n");
-	}
-	
-}
-//################3
-void Ver_Farol()
-{	
-	setServoPos(0);
-	readSensors(); 
-	if(readBeaconSens()==1)
-	{
-		andar_frente();
-	}
-	
-}
-//################3
+
+
+
+
+//########################################################################################################################################################################
 void ANDAR1 ()
 {
 		if(sensor_dir < LIMIAR && sensor_frente < LIMIAR && sensor_esq < LIMIAR )
@@ -206,27 +194,27 @@ void ANDAR2 ()
 
 }
 
-//################3
+//##################################################################################################################################################################3
 void Sensor()
 {
 	int sum_dir=0, sum_esq=0, sum_frente=0;
 
-	
-	int i=0;
-	for( i=0; i<2; i++){
-		a_s_dir[i]=a_s_dir[i+1];
-		a_s_esq[i]=a_s_esq[i+1];
-		a_s_frente[i]=a_s_frente[i+1];
-		
-	
-	}
-
+	//para garantir que funcionao
 	disableObstSens();
 	disableLineSens();
 	enableLineSens();
 	enableObstSens();
 		
-	readSensors();  
+	readSensors(); 
+	
+
+	int i=0;
+	for( i=0; i<2; i++){
+		a_s_dir[i]=a_s_dir[i+1];
+		a_s_esq[i]=a_s_esq[i+1];
+		a_s_frente[i]=a_s_frente[i+1];
+	}
+ 
 	
 	a_s_dir[2] = obstacleSensor(OBST_SENSOR_RIGHT);
 	a_s_esq[2] = obstacleSensor(OBST_SENSOR_LEFT);
@@ -234,11 +222,14 @@ void Sensor()
 	
 
 	
-	Chegada_Farol(); //verificao da chegada ao farol substitui => linha = lineSensor(LINE_SENSOR_CENTER);
-	Ver_Farol();
-		//farolsen = readBeaconSens();
+	Chegada_Farol(); 		//verificao da chegada ao farol substitui => linha = lineSensor(LINE_SENSOR_CENTER);
 
-	
+	if(seg%5 == 0){			//verificar isto pois nao sei se ele ve o farol so de 5 em 5 s
+		Ver_Farol();		
+	}
+
+	// media dos sensores
+
 	sum_dir= a_s_dir[0] + a_s_dir[1] + a_s_dir[2]; 
 	sum_esq= a_s_esq[0] + a_s_esq[1] + a_s_esq[2]; 
 	sum_frente= a_s_frente[0] + a_s_frente[1] + a_s_frente[1]; 
@@ -249,10 +240,52 @@ void Sensor()
 	sensor_frente= sum_dir/3;
 
 
-
+	printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
 
 }
-//######################################################################################################################################################33
+
+//############################################################################################################################################################3
+void Chegada_Farol ()
+{
+	
+	if (lineSensor(LINE_SENSOR_LEFT1) == 1 ||lineSensor(LINE_SENSOR_CENTER) == 1 || lineSensor(LINE_SENSOR_RIGHT1) == 1 || lineSensor(LINE_SENSOR_RIGHT2) == 1)
+	{	
+		wait(2); //para se ver melhor depois
+		Stop_robot();
+		estado = 0;
+		printf("Cheguei ao farol  CARALHO!!!!!!!!!!!!!!!!!\n\n");
+	}
+	
+}
+
+//################3
+/*esta funcao tem de ser alterada pois ele tem de ver se encotra o farol a 360º */
+void Ver_Farol()
+{	
+	setServoPos(0);
+	readSensors(); 
+	if(readBeaconSens()==1)
+	{
+		andar_frente();
+	}
+	
+}
+
+
+
+//############################################################################################################################################################
+/* TimeOut e a funçao que desliga o robot  do fim de 3 min*/
+void TimeOut(){
+
+	if ( readCoreTimer() >= 20000000)
+		 {
+			seg++;
+			if(seg>=180){
+				Fim();
+			}
+		
+		}
+}
 /* esta funçao serve para mostrar que robô dê a sua prova por concluída, tendo ou não atingido objetivo.
 *Para isso os led devem permanecer intermitente, com uma frequência compreendida entre 1 e 5 Hz*/
 void Fim(){
@@ -273,15 +306,8 @@ void Fim(){
 	}
 
 }
-//############################################################################################################################################################
-void TimeOut(){
+//######################################################################################################################################################################3
 
-	if ( readCoreTimer() >= 20000000)
-		 {
-			seg++;
-			if(seg>=180){
-				Fim();
-			}
-		
-		}
-}
+
+
+
