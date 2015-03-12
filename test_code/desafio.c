@@ -71,6 +71,8 @@ int main (void)
 	{
 		estado = 1;
 		resetCoreTimer();
+		printf("\n\n");
+		printf( readCoreTimer()+ "\n");
 	}
 	else if(stopButton() == 1) //Botao stop(vermelho) primido
 	{
@@ -291,6 +293,7 @@ void TimeOut(){
 void Fim(){
 
 	stopMotors();
+	printStr("TimeOut\n");
 	//esta a frequencia 1hz
 	while(TRUE){
 		setLed(0);
