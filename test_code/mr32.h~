@@ -19,15 +19,19 @@
 
 #include <detpic32.h>
 
+
+//#define USING_ENCODERS
+
+
 typedef unsigned int BOOL;
 
 #define TRUE	1
 #define FALSE	0
 
-#define forever while(1)
-#define and		&&
-#define not		!
-#define or		||
+//#define forever while(1)
+//#define and		&&
+//#define not		!
+//#define or		||
 
 #define OBST_SENSOR_RIGHT	0
 #define OBST_SENSOR_FRONT	1
@@ -63,6 +67,10 @@ typedef unsigned int BOOL;
 #define readBeaconSens() (PORTBbits.RB9)
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // ****************************************************************************
 // Global variables
 typedef union
@@ -85,16 +93,15 @@ extern MR32_SENS sensors;
 extern int SERVO_WIDTH_MIN;
 extern int SERVO_WIDTH_MAX;
 
-volatile BOOL tick10ms;
-volatile BOOL tick20ms;
-volatile BOOL tick40ms;
-volatile BOOL tick80ms;
-volatile BOOL tick160ms;
+extern volatile BOOL tick10ms;
+extern volatile BOOL tick20ms;
+extern volatile BOOL tick40ms;
+extern volatile BOOL tick80ms;
+extern volatile BOOL tick160ms;
 
 // ****************************************************************************
 // Function prototypes
 void initPIC32(void);
-void setVel2(int leftSpeed, int rightSpeed);
 void readSensors(void);
 void setServoPos(int pos);
 void setLed(int ledNr);
@@ -108,7 +115,20 @@ int sensor(unsigned int sensorId);
 unsigned int battery(void);
 void stopMotors(void);
 
-void readEncoders(int *enc_m1, int *enc_m2);
+#ifdef USING_ENCODERS
+	void setSP2(int spLeft, int spRight);
+#else
+	void setVel2(int leftSpeed, int rightSpeed);
+#endif
+
+double cosine(double x);
+double sine(double x);
+double normalizeAngle(double angle);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
 

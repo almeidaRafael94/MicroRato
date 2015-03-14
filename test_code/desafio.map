@@ -32,14 +32,14 @@ Archive member included because of file (symbol)
 Allocating common symbols
 Common symbol       size              file
 
-tick80ms            0x4               mr32.o
+tick80ms            0x4               desafio.o
 sensor_dir          0x4               desafio.o
 sensor_frente       0x4               desafio.o
-tick20ms            0x4               mr32.o
+tick20ms            0x4               desafio.o
 sensor_esq          0x4               desafio.o
-tick40ms            0x4               mr32.o
-tick160ms           0x4               mr32.o
-tick10ms            0x4               mr32.o
+tick40ms            0x4               desafio.o
+tick160ms           0x4               desafio.o
+tick10ms            0x4               desafio.o
 sensors             0x1c              mr32.o
 
 Microchip PIC32 Memory-Usage Report
@@ -47,11 +47,11 @@ Microchip PIC32 Memory-Usage Report
 kseg0 Program-Memory Usage
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-.text                   0x9d001400         0x3404       13316  Application's executable code 
-.rodata                 0x9d004808          0x1c8         456  Read-only constant data 
-.data                   0x9d0049d0           0x18          24  Data-initialization template 
-.sdata                  0x9d0049e8           0x40          64  Small data-initialization template 
-      Total kseg0_program_mem used  :      0x3624       13860  2.7% of 0x7ec00
+.text                   0x9d001400         0x32c0       12992  Application's executable code 
+.rodata                 0x9d0046c0          0x198         408  Read-only constant data 
+.data                   0x9d004858           0x18          24  Data-initialization template 
+.sdata                  0x9d004870           0x40          64  Small data-initialization template 
+      Total kseg0_program_mem used  :      0x34b0       13488  2.6% of 0x7ec00
 
 kseg0 Boot-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -71,7 +71,7 @@ section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
          Total kseg1_boot_mem used  :           0           0  <1% of 0x490
         --------------------------------------------------------------------------
-         Total Program Memory used  :      0x38f0       14576  2.8% of 0x80480
+         Total Program Memory used  :      0x377c       14204  2.7% of 0x80480
         --------------------------------------------------------------------------
 
 
@@ -81,11 +81,11 @@ section                    address  length [bytes]      (dec)  Description
 .data                   0xa0000000           0x18          24  Initialized data 
 .sdata                  0xa0000018           0x40          64  Small initialized data 
 .sbss                   0xa0000058           0x58          88  Small uninitialized data 
-.bss                    0xa00000b0           0x80         128  Uninitialized data 
-.stack                  0xa0000130         0x2000        8192  Minimum space reserved for stack 
-         Total kseg1_data_mem used  :      0x2130        8496  6.5% of 0x20000
+.bss                    0xa00000b0           0x5c          92  Uninitialized data 
+.stack                  0xa0000110         0x2000        8192  Minimum space reserved for stack 
+         Total kseg1_data_mem used  :      0x210c        8460  6.5% of 0x20000
         --------------------------------------------------------------------------
-            Total Data Memory used  :      0x2130        8496  6.5% of 0x20000
+            Total Data Memory used  :      0x210c        8460  6.5% of 0x20000
         --------------------------------------------------------------------------
 
 Memory Configuration
@@ -416,124 +416,124 @@ LOAD /opt/pic32mx/lib/startup.o
  *(.vector_63)
                 0x0000000000000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_63) <= (_vector_spacing << 0x5))), function at exception vector 63 too large)
 
-.text           0x000000009d001400     0x3404
+.text           0x000000009d001400     0x32c0
                 0x000000009d001400                _text_begin = .
  *(.text .stub .text.* .gnu.linkonce.t.*)
- .text          0x000000009d001400      0x6d8 desafio.o
+ .text          0x000000009d001400      0x594 desafio.o
                 0x000000009d00145c                Rodar_Sobre_Si
                 0x000000009d001550                ANDAR2
                 0x000000009d001400                Stop_robot
                 0x000000009d001620                Chegada_Farol
-                0x000000009d0018c8                Fim
+                0x000000009d001784                Fim
                 0x000000009d001450                andar_frente
                 0x000000009d0016ac                Ver_Farol
                 0x000000009d001420                Ajusta_Esq
-                0x000000009d0016ec                Sensor
+                0x000000009d0016f4                Sensor
                 0x000000009d001468                ANDAR1
-                0x000000009d00193c                TimeOut
-                0x000000009d00198c                main
+                0x000000009d001800                TimeOut
+                0x000000009d001874                main
                 0x000000009d00142c                Ajusta_Dir
                 0x000000009d001438                Vira_Dir
                 0x000000009d001444                Vira_esq
- .text          0x000000009d001ad8     0x10e8 mr32.o
-                0x000000009d001c60                avfilter_mright
-                0x000000009d002aa0                normalizeAngle
-                0x000000009d002114                readSensors
-                0x000000009d001ad8                setServoPos
-                0x000000009d002bb0                __gxx_personality_v0
-                0x000000009d002a74                sine
-                0x000000009d001e90                isr_t2
-                0x000000009d002630                lineSensor
-                0x000000009d001cac                setLed
-                0x000000009d002558                wait
-                0x000000009d0021cc                initPIC32
-                0x000000009d002674                cosine
-                0x000000009d00206c                getLineSensors
-                0x000000009d002020                delay
-                0x000000009d001ce0                resetLed
-                0x000000009d002598                setVel2
-                0x000000009d0025ac                stopMotors
-                0x000000009d00260c                sensor
-                0x000000009d001d18                actuateMotors
-                0x000000009d001b7c                battery
-                0x000000009d001c14                avfilter_mleft
-                0x000000009d002658                pow2
-                0x000000009d0025e8                obstacleSensor
- .text          0x000000009d002bc0      0x990 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
-                0x000000009d002bc8                xprintf
- .text          0x000000009d003550      0x3e0 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_addsub_df.o)
-                0x000000009d003864                __adddf3
-                0x000000009d0038c4                __subdf3
- .text          0x000000009d003930      0x358 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_mul_df.o)
-                0x000000009d003930                __muldf3
- .text          0x000000009d003c88      0x238 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_div_df.o)
-                0x000000009d003c88                __divdf3
- .text          0x000000009d003ec0       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_eq_df.o)
-                0x000000009d003ec0                __eqdf2
- .text          0x000000009d003f50       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_gt_df.o)
-                0x000000009d003f50                __gtdf2
- .text          0x000000009d003fe0       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_ge_df.o)
-                0x000000009d003fe0                __gedf2
- .text          0x000000009d004070       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_lt_df.o)
-                0x000000009d004070                __ltdf2
- .text          0x000000009d004100       0xc8 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_si_to_df.o)
-                0x000000009d004100                __floatsidf
- .text          0x000000009d0041c8       0xd4 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_df_to_si.o)
-                0x000000009d0041c8                __fixdfsi
- .text          0x000000009d00429c      0x234 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_pack_df.o)
-                0x000000009d00429c                __pack_d
- .text          0x000000009d0044d0      0x11c /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_unpack_df.o)
-                0x000000009d0044d0                __unpack_d
- .text          0x000000009d0045ec      0x168 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_fpcmp_parts_df.o)
-                0x000000009d0045ec                __fpcmp_parts_d
- .text          0x000000009d004754       0xb0 /opt/pic32mx/lib/startup.o
-                0x000000009d0047c4                printStr
-                0x000000009d0047a4                printInt
-                0x000000009d004784                readInt
-                0x000000009d0047fc                resetCoreTimer
-                0x000000009d004774                putChar
-                0x000000009d0047d4                readStr
-                0x000000009d0047b4                printInt10
-                0x000000009d004754                inkey
-                0x000000009d0047e4                exit
-                0x000000009d004764                getChar
-                0x000000009d004794                readInt10
-                0x000000009d0047f4                readCoreTimer
+ .text          0x000000009d001994     0x10e8 mr32.o
+                0x000000009d001b1c                avfilter_mright
+                0x000000009d00295c                normalizeAngle
+                0x000000009d001fd0                readSensors
+                0x000000009d001994                setServoPos
+                0x000000009d002a6c                __gxx_personality_v0
+                0x000000009d002930                sine
+                0x000000009d001d4c                isr_t2
+                0x000000009d0024ec                lineSensor
+                0x000000009d001b68                setLed
+                0x000000009d002414                wait
+                0x000000009d002088                initPIC32
+                0x000000009d002530                cosine
+                0x000000009d001f28                getLineSensors
+                0x000000009d001edc                delay
+                0x000000009d001b9c                resetLed
+                0x000000009d002454                setVel2
+                0x000000009d002468                stopMotors
+                0x000000009d0024c8                sensor
+                0x000000009d001bd4                actuateMotors
+                0x000000009d001a38                battery
+                0x000000009d001ad0                avfilter_mleft
+                0x000000009d002514                pow2
+                0x000000009d0024a4                obstacleSensor
+ .text          0x000000009d002a7c      0x990 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
+                0x000000009d002a84                xprintf
+ .text          0x000000009d00340c      0x3e0 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_addsub_df.o)
+                0x000000009d003720                __adddf3
+                0x000000009d003780                __subdf3
+ .text          0x000000009d0037ec      0x358 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_mul_df.o)
+                0x000000009d0037ec                __muldf3
+ .text          0x000000009d003b44      0x238 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_div_df.o)
+                0x000000009d003b44                __divdf3
+ .text          0x000000009d003d7c       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_eq_df.o)
+                0x000000009d003d7c                __eqdf2
+ .text          0x000000009d003e0c       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_gt_df.o)
+                0x000000009d003e0c                __gtdf2
+ .text          0x000000009d003e9c       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_ge_df.o)
+                0x000000009d003e9c                __gedf2
+ .text          0x000000009d003f2c       0x90 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_lt_df.o)
+                0x000000009d003f2c                __ltdf2
+ .text          0x000000009d003fbc       0xc8 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_si_to_df.o)
+                0x000000009d003fbc                __floatsidf
+ .text          0x000000009d004084       0xd4 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_df_to_si.o)
+                0x000000009d004084                __fixdfsi
+ .text          0x000000009d004158      0x234 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_pack_df.o)
+                0x000000009d004158                __pack_d
+ .text          0x000000009d00438c      0x11c /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_unpack_df.o)
+                0x000000009d00438c                __unpack_d
+ .text          0x000000009d0044a8      0x168 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_fpcmp_parts_df.o)
+                0x000000009d0044a8                __fpcmp_parts_d
+ .text          0x000000009d004610       0xb0 /opt/pic32mx/lib/startup.o
+                0x000000009d004680                printStr
+                0x000000009d004660                printInt
+                0x000000009d004640                readInt
+                0x000000009d0046b8                resetCoreTimer
+                0x000000009d004630                putChar
+                0x000000009d004690                readStr
+                0x000000009d004670                printInt10
+                0x000000009d004610                inkey
+                0x000000009d0046a0                exit
+                0x000000009d004620                getChar
+                0x000000009d004650                readInt10
+                0x000000009d0046b0                readCoreTimer
  *(.text.*personality*)
  *(.gnu.warning)
  *(.mips16.fn.*)
  *(.mips16.call.*)
-                0x000000009d004804                _text_end = .
+                0x000000009d0046c0                _text_end = .
 
-.rodata         0x000000009d004808      0x1c8
+.rodata         0x000000009d0046c0      0x198
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata.str1.4
-                0x000000009d004808       0x97 desafio.o
-                                         0x98 (size before relaxing)
- *fill*         0x000000009d00489f        0x1 00
- .rodata.cst8   0x000000009d0048a0       0x38 mr32.o
+                0x000000009d0046c0       0x66 desafio.o
+                                         0x6c (size before relaxing)
+ *fill*         0x000000009d004726        0x2 00
+ .rodata.cst8   0x000000009d004728       0x38 mr32.o
  .rodata.str1.4
-                0x000000009d0048d8       0x11 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
+                0x000000009d004760       0x11 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
                                          0x14 (size before relaxing)
- *fill*         0x000000009d0048e9        0x7 00
- .rodata.cst8   0x000000009d0048f0       0x20 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
- .rodata        0x000000009d004910       0x84 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
- *fill*         0x000000009d004994        0x4 00
- .rodata.cst8   0x000000009d004998        0x8 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_si_to_df.o)
- .rodata        0x000000009d0049a0       0x18 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_thenan_df.o)
-                0x000000009d0049a0                __thenan_df
- .rodata        0x000000009d0049b8       0x15 /opt/pic32mx/lib/startup.o
+ *fill*         0x000000009d004771        0x7 00
+ .rodata.cst8   0x000000009d004778       0x20 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
+ .rodata        0x000000009d004798       0x84 /opt/pic32mx/lib/libdetpic32.a(xprintf.o)
+ *fill*         0x000000009d00481c        0x4 00
+ .rodata.cst8   0x000000009d004820        0x8 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_si_to_df.o)
+ .rodata        0x000000009d004828       0x18 /opt/pic32mx/lib/gcc/pic32mx/3.4.4/libgcc.a(_thenan_df.o)
+                0x000000009d004828                __thenan_df
+ .rodata        0x000000009d004840       0x15 /opt/pic32mx/lib/startup.o
  *(.rodata1)
-                0x000000009d0049d0                . = ALIGN (0x4)
- *fill*         0x000000009d0049cd        0x3 00
+                0x000000009d004858                . = ALIGN (0x4)
+ *fill*         0x000000009d004855        0x3 00
 
-.sdata2         0x000000009d0049d0        0x0
+.sdata2         0x000000009d004858        0x0
  *(.sdata2 .sdata2.* .gnu.linkonce.s2.*)
-                0x000000009d0049d0                . = ALIGN (0x4)
+                0x000000009d004858                . = ALIGN (0x4)
 
-.sbss2          0x000000009d0049d0        0x0
+.sbss2          0x000000009d004858        0x0
  *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*)
-                0x000000009d0049d0                . = ALIGN (0x4)
+                0x000000009d004858                . = ALIGN (0x4)
 
 .eh_frame_hdr
  *(.eh_frame_hdr)
@@ -544,13 +544,13 @@ LOAD /opt/pic32mx/lib/startup.o
 .dbg_data       0x00000000a0000000        0x0
                 0x00000000a0000000                . = (. + DEFINED (_DEBUGGER)?0x200:0x0)
 
-.data           0x00000000a0000000       0x18 load address 0x000000009d0049d0
+.data           0x00000000a0000000       0x18 load address 0x000000009d004858
                 0x00000000a0000000                _data_begin = .
  *(.data .data.* .gnu.linkonce.d.*)
  .data          0x00000000a0000000       0x18 mr32.o
  *(.gnu.linkonce.d.*personality*)
  *(.data1)
-                0x000000009d0049d0                _data_image_begin = LOADADDR (.data)
+                0x000000009d004858                _data_image_begin = LOADADDR (.data)
 
 .eh_frame
  *(.eh_frame)
@@ -560,7 +560,7 @@ LOAD /opt/pic32mx/lib/startup.o
  *(.got.plt)
  *(.got)
 
-.sdata          0x00000000a0000018       0x40 load address 0x000000009d0049e8
+.sdata          0x00000000a0000018       0x40 load address 0x000000009d004870
                 0x00000000a0000018                _sdata_begin = .
  *(.sdata .sdata.* .gnu.linkonce.s.*)
  .sdata         0x00000000a0000018       0x40 mr32.o
@@ -584,59 +584,54 @@ LOAD /opt/pic32mx/lib/startup.o
  .sbss          0x00000000a0000058       0x14 desafio.o
                 0x00000000a000005c                reset
                 0x00000000a0000068                estado
-                0x00000000a0000058                seg
                 0x00000000a0000060                farolsen
                 0x00000000a0000064                linha
+                0x00000000a0000058                ciclos
  .sbss          0x00000000a000006c       0x24 mr32.o
  *(.scommon)
- .scommon       0x00000000a0000090        0xc desafio.o
-                0x00000000a0000090                sensor_dir
-                0x00000000a0000094                sensor_frente
-                0x00000000a0000098                sensor_esq
- .scommon       0x00000000a000009c       0x14 mr32.o
-                0x00000000a000009c                tick80ms
-                0x00000000a00000a0                tick20ms
+ .scommon       0x00000000a0000090       0x20 desafio.o
+                0x00000000a0000090                tick80ms
+                0x00000000a0000094                sensor_dir
+                0x00000000a0000098                sensor_frente
+                0x00000000a000009c                tick20ms
+                0x00000000a00000a0                sensor_esq
                 0x00000000a00000a4                tick40ms
                 0x00000000a00000a8                tick160ms
                 0x00000000a00000ac                tick10ms
                 0x00000000a00000b0                _sbss_end = .
 
-.bss            0x00000000a00000b0       0x80
+.bss            0x00000000a00000b0       0x5c
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
- .bss           0x00000000a00000b0       0x24 desafio.o
-                0x00000000a00000c8                a_s_dir
-                0x00000000a00000b0                a_s_frente
-                0x00000000a00000bc                a_s_esq
- .bss           0x00000000a00000d4       0x40 mr32.o
+ .bss           0x00000000a00000b0       0x40 mr32.o
  *(COMMON)
- COMMON         0x00000000a0000114       0x1c mr32.o
-                0x00000000a0000114                sensors
-                0x00000000a0000130                . = ALIGN (0x4)
-                0x00000000a0000130                . = ALIGN (0x4)
-                0x00000000a0000130                _end = .
-                0x00000000a0000130                _bss_end = .
+ COMMON         0x00000000a00000f0       0x1c mr32.o
+                0x00000000a00000f0                sensors
+                0x00000000a000010c                . = ALIGN (0x4)
+                0x00000000a000010c                . = ALIGN (0x4)
+                0x00000000a000010c                _end = .
+                0x00000000a000010c                _bss_end = .
 
-.persist        0x00000000a0000130        0x0
+.persist        0x00000000a000010c        0x0
  *(.persist)
-                0x00000000a0000130                . = ALIGN (0x4)
+                0x00000000a000010c                . = ALIGN (0x4)
 
-.heap           0x00000000a0000130        0x0
-                0x00000000a0000130                _heap = .
-                0x00000000a0000130                . = (. + _min_heap_size)
+.heap           0x00000000a000010c        0x0
+                0x00000000a000010c                _heap = .
+                0x00000000a000010c                . = (. + _min_heap_size)
 
-.stack          0x00000000a0000130     0x2000
-                0x00000000a0000130                _splim = .
-                0x00000000a0000130                _SPLIM = .
-                0x00000000a0002130                . = (. + _min_stack_size)
- *fill*         0x00000000a0000130     0x2000 00
+.stack          0x00000000a0000110     0x2000
+                0x00000000a0000110                _splim = .
+                0x00000000a0000110                _SPLIM = .
+                0x00000000a0002110                . = (. + _min_stack_size)
+ *fill*         0x00000000a0000110     0x2000 00
 
-.ramfunc        0x00000000a0002800        0x0 load address 0x000000009d004a28
+.ramfunc        0x00000000a0002800        0x0 load address 0x000000009d0048b0
                 0x00000000a0002800                _ramfunc_begin = .
  *(.ramfunc .ramfunc.*)
                 0x00000000a0002800                . = ALIGN (0x4)
                 0x00000000a0002800                _ramfunc_end = .
-                0x000000009d004a28                _ramfunc_image_begin = LOADADDR (.ramfunc)
+                0x000000009d0048b0                _ramfunc_image_begin = LOADADDR (.ramfunc)
                 0x0000000000000000                _ramfunc_length = SIZEOF (.ramfunc)
                 0x0000000000002800                _bmxdkpba_address = (_ramfunc_begin - 0xa0000000)
                 0x0000000000020000                _bmxdudba_address = 0x20000
@@ -758,4 +753,4 @@ LOAD /opt/pic32mx/lib/startup.o
  *(.note.GNU-stack)
 OUTPUT(desafio.elf elf32-tradlittlemips)
 
-.mdebug.abi32   0x000000009d004a28        0x0
+.mdebug.abi32   0x000000009d0048b0        0x0
