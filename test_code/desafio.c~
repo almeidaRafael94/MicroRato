@@ -15,7 +15,7 @@ int farolsen = 0;
 int reset = 0;
 /*int a_s_dir[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
 int a_s_esq[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
-int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/
+int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/   /*olaTeste2*/
 int ciclos=0;	//tempo em funcionamento
 
 
@@ -292,11 +292,11 @@ void TimeOut(){
 
 	//int tempo=readCoreTimer();
 	
-	if (tick160ms==1)// tempo >= 2000000)
+	if (tick160ms==1)// 
 		 {
 			ciclos++;
 			printf("read %d \n", ciclos);
-			if(ciclos>=1125){
+			if(ciclos>=1125){		//falta ver o valor certo, mas ja funciona
 				Fim();
 			}
 		tick160ms=0;	//reset a flag
@@ -315,12 +315,12 @@ void Fim(){
 		setLed(1);
 		setLed(2);
 		setLed(3);
-		wait(10);
+		wait(5);
 		resetLed(0);
 		resetLed(1);
 		resetLed(2);
 		resetLed(3);
-		wait(10);
+		wait(5);
 	}
 
 }

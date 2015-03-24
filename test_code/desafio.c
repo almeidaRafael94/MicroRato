@@ -15,7 +15,8 @@ int farolsen = 0;
 int reset = 0;
 /*int a_s_dir[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
 int a_s_esq[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
-int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/
+int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/   /*olaTeste2*/
+
 int ciclos=0;	//tempo em funcionamento
 
 
