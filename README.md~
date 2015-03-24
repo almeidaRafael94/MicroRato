@@ -2,13 +2,28 @@
 ================
 
 ##o nosso Robot e o 11
+####Pasta
+** Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
+*MR32 - Biblioteca de funções para o robô DETI
+*Programa exemplo
+*Programa para calibração do servo
 
+**Drunk_Mouse2 -  do codigo para este ano
+**test_code - codigo antigo 
+####Pasta
+
+	
+
+---
 This README would normally document whatever steps are necessary to get your application up and running.
 
 => e nesserario tenter intalado o software da pic32
 
 => into para ja e so um teste para depois se fazer o codigo final
---
+
+
+
+---
 ### Atenção o mr32 fui totalmente aterado pelo prof.
 
 fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
