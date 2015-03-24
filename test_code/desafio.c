@@ -228,10 +228,16 @@ void Sensor()
 	*/
 	Chegada_Farol(); 		//verificao da chegada ao farol substitui => linha = lineSensor(LINE_SENSOR_CENTER);
 
-	//if(seg%5 == 0){			//verificar isto pois nao sei se ele ve o farol so de 5 em 5 s
-		Ver_Farol();		
-	//}
 
+#if 0
+	if((ciclos%10 )== 0){			//verificar isto pois nao sei se ele ve o farol so de 5 em 5 s
+		Ver_Farol();	
+	}
+#else
+	Ver_Farol();
+#endif
+
+	
 	/*// media dos sensores
 
 	for( i=0; i<9; i++){
@@ -239,7 +245,7 @@ void Sensor()
 		sum_esq=+ a_s_esq[i];
 		sum_frente=+a_s_frente[i];
 	}
-	
+
 
 
 	sensor_esq = sum_dir/10;
