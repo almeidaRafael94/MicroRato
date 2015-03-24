@@ -8,13 +8,13 @@
 fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 
 ---
-####Pasta
-** Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
-*MR32 - Biblioteca de funções para o robô DETI
-*Programa exemplo
-*Programa para calibração do servo
-**Drunk_Mouse2 -  do codigo para este ano
-**test_code - codigo antigo 
+####Pastas:
+*Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
+  *MR32 - Biblioteca de funções para o robô DETI
+  *Programa exemplo
+  *Programa para calibração do servo
+*Drunk_Mouse2 -  do codigo para este ano
+*test_code - codigo antigo 
 
 
 ---
