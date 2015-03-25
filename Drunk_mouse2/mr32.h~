@@ -1,5 +1,5 @@
 /**
- * \file mr32.h
+ * \file rmi-mr32.h
  * \brief The MR32 library used in RMI
  *
  * \defgroup general General functions

@@ -7,7 +7,7 @@
 // J.L.Azevedo, DETI-UA
 // ****************************************************************************
 
-#include "mr32.h"
+#include "rmi-mr32.h"
 #include <math.h>
 
 #ifdef __cplusplus

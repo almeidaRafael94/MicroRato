@@ -1,7 +1,7 @@
 #include "mr32.h"
-#include "math.h"
-#include "string.h"
-#include "stdlib.h"
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
 void rotateRel_naive(double);
 
