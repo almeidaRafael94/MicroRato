@@ -9,16 +9,17 @@
 
 
 
-volatile int sensor_dir,sensor_esq,sensor_frente; 
-volatile int estado=0;     /* 0 = parado; 1 = a trabalhar */
-volatile int linha = 0;
-volatile int farolsen = 0;
-volatile int reset = 0;
+int sensor_dir,sensor_esq,sensor_frente; 
+int estado=0;     /* 0 = parado; 1 = a trabalhar */
+int linha = 0;
+int farolsen = 0;
+int reset = 0;
 /*int a_s_dir[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
 int a_s_esq[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
 int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/   /*olaTeste2*/
 
 int ciclos=0;	//tempo em funcionamento
+
 
 
 
@@ -47,15 +48,6 @@ int main (void)
   	closedLoopControl( true );
   	setVel2(0, 0);
 
-  	T4CONbits.TCKPS=5;
-PR4=(PBCLK/32/3)-1;//fout 20MHz/(32*(62499+1))*10Hz,freq a 1 hz
-TMR4=0;//Reset timer T2
-T4CONbits.TON=1;
-//Interrupts
-IFS0bits.T4IF=0;//reset do timer
-IPC4bits.T4IP=2;//priority
-IEC0bits.T4IE=1;//enable timer3
-EnableInterrupts();
 
 	printStr(__FILE__); // para saber o nome do ficheiro que esta a correr no robot
 	printf("\r    battery: %d ", batteryVoltage());
@@ -63,7 +55,7 @@ EnableInterrupts();
 	
 
 //desligar os leds para o inicio
-	leds(0b1111);	//leds off
+	leds(0x0);	//leds off
 
 
 
@@ -73,7 +65,7 @@ EnableInterrupts();
 	
 	TimeOut();		// timeOut => tb devia ir para uma inturrupcao
 
-	//Sensor(); 	 //leitura os sensores tem de se por numa interropecao
+	Sensor(); 	 //leitura os sensores tem de se por numa interropecao
 
 	
 
@@ -90,15 +82,14 @@ EnableInterrupts();
 	else if(stopButton() == 1) //Botao stop(vermelho) primido
 	{
 		estado = 0;
-		leds(0x0);
 	}
 
  	//funcoa de funcionameneto
 	if(estado == 1) // robot fica em presesamento
 	{
-		Ver_Farol();
-		printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r",	sensor_dir,sensor_frente,sensor_esq,linha ,farolsen );
+		Ver_Farol();		
 		ANDAR2();
+		
 	}
 	//quando e primido o botao stop
 	else if(stopButton() == 1)		// deslica o funcionamento, nenhum led activo
@@ -213,7 +204,7 @@ void ANDAR2 ()
 void Sensor()
 {
 	//int sum_dir=0, sum_esq=0, sum_frente=0;
-	printf("Sensor\n");
+
 	//para garantir que funcionao
 	disableObstSens();
 	//disableLineSens();
@@ -267,7 +258,7 @@ void Sensor()
 	sensor_frente= obstacleSensor(OBST_SENSOR_FRONT);
 
 
-	//printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
+	printf("D: %d   F: %d   E: %d     LINHA: %d    Farol: %d \r", obstacleSensor(0), obstacleSensor(1), obstacleSensor(2), linha, farolsen );
 
 }
 
@@ -328,18 +319,23 @@ void Fim(){
 	//esta a frequencia 1hz
 	while(TRUE){
 		printStr("TimeOut\n");
-		leds(0xF);
+		leds(0x4);
 		wait(5);
 		leds(0x0);
 		wait(5);
 	}
-}
-//######################################################################################################################################################################33
-void _int_(_TIMER_4_VECTOR) isr_t22(void)
-{
 
-	Sensor();
-	printf("puta Cheguei\n");
-	
-	IFS0bits.T4IF = 0;
 }
+//######################################################################################################################################################################3
+
+ void _int_(27) isr_adc() 	// Replace VECTOR by the A/D vector
+ 				// number - see "PIC32 family data
+ 				// sheet" (pages 122-124)
+ {
+ 	
+ 	printInt(ADC1BUF0,0x000400A);		// Print ADC1BUF0 value // Hexadecimal (3 digits format)
+	printStr("\n");				
+	AD1CON1bits.ASAM=1; 			// Start A/D conversion
+ 	IFS1bits.AD1IF = 0; 			// Reset AD1IF flag
+ } 
+
