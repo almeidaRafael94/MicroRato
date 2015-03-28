@@ -14,11 +14,7 @@ volatile int estado=0;     /* 0 = parado; 1 = a trabalhar */
 volatile int linha = 0;
 volatile int farolsen = 0;
 volatile int reset = 0;
-/*int a_s_dir[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
-int a_s_esq[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};
-int a_s_frente[10]= {0, 0, 0, 0, 0,0, 0,0, 0, 0};*/   /*olaTeste2*/
-
-int ciclos=0;	//tempo em funcionamento
+int ciclos=0;				//tempo em funcionamento
 
 
 
@@ -89,7 +85,7 @@ int main (void)
  	//funcoa de funcionameneto
 	if(estado == 1) // robot fica em presesamento
 	{
-		
+
 		TimeOut();		// timeOut => tb devia ir para uma inturrupcao
 		Chegada_Farol();
 		Ver_Farol();
@@ -249,22 +245,20 @@ void Ver_Farol()
 
 //############################################################################################################################################################
 /* TimeOut e a funçao que desliga o robot  do fim de 3 min*/
-/*a flag muda para 1 a cada 160ms por isso para o robot 3 min sao 180000 logo sao 1125 ciclos
-*ciclos = ms_activo/160
+/* com os 40ms para fazer 3min sa presisos 4500ciclos 
 */
 void TimeOut(){
 
 	//int tempo=readCoreTimer();
 	
-	if (tick160ms==1)// 
-		 {
+		 
 			ciclos++;
 			//printf("read %d \n", ciclos);
-			if(ciclos>=1125){		//falta ver o valor certo, mas ja funciona
+			if(ciclos>=4500){		//falta ver o valor certo, mas ja funciona
 				Fim();
 			}
-		tick160ms=0;	//reset a flag
-		}
+			//reset a flag
+		
 }
 /* esta funçao serve para mostrar que robô dê a sua prova por concluída, tendo ou não atingido objetivo.
 *Para isso os led devem permanecer intermitente, com uma frequência compreendida entre 1 e 5 Hz*/
