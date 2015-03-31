@@ -4,8 +4,10 @@ void StopRobot (void);
 void mapTerrain(int, int);
 
 int estado = 0;
-int position [100][100]; // Tentar meter dinamico
-int index = 0;
+
+int xx = 0;
+int yy = 0;
+int tt = 0;
 
 int main(void)
 {
@@ -21,34 +23,33 @@ int main(void)
 
 		if (batteryVoltage() <= 94)
 		{
-			printf("Mudar Bateria CARALHO!!");
+			printf("Bateria fraca, mudar bateria!!");
 			StopRobot();
+			return 0;
 		}
-
-		if (startButton() == 1)
+		else
 		{
-			estado = 1;
+			if (startButton() == 1)
+			{
+				estado = 1;
+			}
 		}
-
-		while(estado == 1)
+	
+		while(estado == 1) // Robot arranca
 		{
 			if (stopButton() == 1)
 			{
-				estado = 0;
 				StopRobot();
+				estado = 0;
 				printf("STOP BUTTON");
 			}
 			else
-			{	
-				double x, y, t;
-
+			{				
 				setVel2(100, 100);
-				wait(10);
-
 
 				getRobotPos(&x, &y, &t);
-				printf("x:%f  y:%f  TETA:%f\n", x, y, t);
-				mapTerrain(x, y, index++);
+				printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print pos
+			
 			}
 		}
 
@@ -59,14 +60,9 @@ int main(void)
 void StopRobot (void)
 {
 	setVel2(0, 0);
-	//tick40ms = 0;
-	//while(tick40ms == 0);
-	//tick40ms = 0;
-	//while(tick40ms == 0);
+	tick40ms = 0;
+	while(tick40ms == 0);
+	tick40ms = 0;
+	while(tick40ms == 0);
 	estado = 0;
-}
-void mapTerrain(int x, int y, int index)
-{
-	position[index][index] = 
-
 }
