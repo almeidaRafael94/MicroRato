@@ -58,8 +58,8 @@ int SERVO_WIDTH_MAX = 2480; // 2.365 ms
 int SERVO_WIDTH_MIN = 555;	// 0.595 ms 
 int SERVO_WIDTH_MAX = 2480; // 2.425 ms
 #elif(ROBOT == 11)
-int SERVO_WIDTH_MIN = 415;	// 0.595 ms 
-int SERVO_WIDTH_MAX = 2515; // 2.515 ms
+int SERVO_WIDTH_MIN = 560;	// 0.595 ms 
+int SERVO_WIDTH_MAX = 2600; // 2.515 ms
 #elif(ROBOT == 12)
 int SERVO_WIDTH_MIN = 635;	// 0.535 ms 
 int SERVO_WIDTH_MAX = 2390; // 2.365 ms

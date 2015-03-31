@@ -59,6 +59,8 @@ int main (void)
 	{	
 		while(!tick40ms);
 		tick40ms=0;
+		disableObstSens();
+		enableObstSens();
 		readAnalogSensors();
 
 		//state buttons
@@ -73,7 +75,6 @@ int main (void)
 		else if(stopButton() == 1) 			//Botao stop(vermelho) primido
 		{
 			estado = 0;
-			disableObstSens();
 		}
 
 		if(estado == 1) 
