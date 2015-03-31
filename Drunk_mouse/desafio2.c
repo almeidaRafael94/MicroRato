@@ -80,7 +80,7 @@ int main (void)
 		{
 			TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 			Chegada_Farol();
-			if(countCiclos++ >= 100)
+			if(countCiclos++ >= 50)
 			{
 
 				Ver_Farol();
@@ -206,66 +206,73 @@ void Run_Beacon ()
 }
 //###################################################################################
 void Chegada_Farol ()
-{		
-	if(readLineSensors(0) > 5)
-	{	
-		estado = 2;
-		while(readLineSensors(0) > 5)
-		{		
-			Rodar_Sobre_Si();
+{	
+	int detectLine = 0;
+	if( readLineSensors(0) > 5)
+	{		
+		while(readLineSensors(0) > 10 && detectLine <= 5)
+		{	
+		
+			detectLine ++;
+		}	
+		if(detectLine >= 5)
+		{	
+			estado = 2;
+			while(readLineSensors(0) > 5)
+			{		
+				Rodar_Sobre_Si();
+			}
+			
 		}
 	}
 }
-/*esta funcao tem de ser alterada pois ele tem de ver se encotra o farol a 360º */
+//####################################################################################################
+/*esta funcao tem de ser alterada pois falta alenhar o servo para quando ele estiver a -15 ou 15 fazer 90 graus com a posicao zero */
 	void Ver_Farol()
 {	
 	
 	stop_Motors();
-	int pos = -15, cont=0;
+	int pos = -15, cont=0, ver=0;
 
 	readAnalogSensors();
 	do{
 		setServoPos(pos);
 		pos++;
 		
+	
+		//printf("farol: %d\n", readBeaconSens() );
+		
 		if(pos== (15)){
 			pos= -15;
 			cont++;
+			if(cont <= 3){
+				rotateRel_naive(normalizeAngle(M_PI/2));
+			}
 		}
-		wait(1);
-		
-	}while((readBeaconSens() ==0 ) && cont <= 1);
+		delay(300);
+
+	}while(readBeaconSens() ==0  && cont < 4);
+
+
 	printf("%d \n", pos);
-	if(pos<0 && cont <2){
-		printf("1\n");	
+	if(pos<0 && cont <1){
+		//printf("1\n");	
 		do{ 
 
-
-			setVel2 (-Velocidade, Velocidade);
-			pos++;
-			setServoPos(pos);
-			wait(0.8);
-			setVel2(0,0);
-		//	rotateRel_naive((double) pos );
-
-		}while((readBeaconSens())==0  && pos != 0);
-		
-	}else if(pos>0 && cont <2){
-		printf("2\n");
-		do{ 
+			rotateRel_naive(normalizeAngle((pos *M_PI/2) / (15) ));
 			
-			setVel2 (Velocidade, -Velocidade);
-			pos--;
-			setServoPos(pos);
-			wait(0.8);
-			setVel2(0,0);
+		}while(!(readBeaconSens())==0  && pos != 0);
+		
+	}else if(pos>0 && cont <1){
+		//printf("2\n");
+		do{ 
+	
+			rotateRel_naive( normalizeAngle ((pos *M_PI/2) / -15));
 
-
-		//	rotateRel_naive((double) (pos* (-1) ) );
-
-		}while((readBeaconSens())==0 && pos != 0);
+		}while(!(readBeaconSens())==0 && pos != 0);
 		
 	}
+	andar_frente();
 	setServoPos(0);
 }
 //###########################################3
@@ -304,8 +311,8 @@ void TimeOut(){
 	
 		 
 			ciclos++;
-			//printf("read %d \n", ciclos);
-			if(ciclos>=4500){		//falta ver o valor certo, mas ja funciona
+			printf("read %d \n", ciclos);
+			if(ciclos>=2715){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
 				Fim();
 			}
 			//reset a flag
