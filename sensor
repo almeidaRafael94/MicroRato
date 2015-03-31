@@ -1,0 +1,4 @@
+Sensor de distancia= isto dá a distancia apartir do valor lido pelo sensor
+distancia=6200/(valADC-80)
+
+distancia em cm
