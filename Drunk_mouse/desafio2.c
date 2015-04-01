@@ -106,7 +106,7 @@ int main (void)
   return (0);
 }
 //############################################################################
-/* conficoraçao dos metores*/
+/* conficoraçao dos motores*/
 
 void Stop_robot()  //serve para quando se carrega no botao de desligar
 {
@@ -228,48 +228,52 @@ void Chegada_Farol ()
 }
 //####################################################################################################
 /*esta funcao tem de ser alterada pois falta alenhar o servo para quando ele estiver a -15 ou 15 fazer 90 graus com a posicao zero */
+/*ver se era por causa do while que isto nao alilhava*/
 	void Ver_Farol()
 {	
 	
 	stop_Motors();
-	int pos = -15, cont=0, ver=0;
+	int position = -15, count=0, ver=0;
 
 	readAnalogSensors();
 	do{
-		setServoPos(pos);
-		pos++;
+		setServoPos(position);
+		position++;
 		
 	
 		//printf("farol: %d\n", readBeaconSens() );
 		
-		if(pos== (15)){
-			pos= -15;
-			cont++;
-			if(cont <= 3){
+		if(position== (15)){
+			position= -15;
+			count++;
+			if(count <= 3){
 				rotateRel_naive(normalizeAngle(M_PI/2));
 			}
 		}
 		delay(300);
 
-	}while(readBeaconSens() ==0  && cont < 4);
+	}while(readBeaconSens() ==0  && count < 4);
 
 
-	printf("%d \n", pos);
-	if(pos<0 && cont <1){
-		//printf("1\n");	
-		do{ 
+	//printf("%d \n", position);
+	if(position < 0 && count < 4){
+		//printf("servo position < 0\n");	
+		//do{ 
 
-			rotateRel_naive(normalizeAngle((pos *M_PI/2) / (15) ));
+			rotateRel_naive(normalizeAngle((position *M_PI/2) / (15) ));
+			//position++;
+			//setServoPos(position);
 			
-		}while(!(readBeaconSens())==0  && pos != 0);
+		//}while(!(readBeaconSens())==0  && position != 0);
 		
-	}else if(pos>0 && cont <1){
-		//printf("2\n");
-		do{ 
+	}else if(position > 0 && count < 4){
+		//printf("servo position > 0\n");
+		//do{ 
 	
-			rotateRel_naive( normalizeAngle ((pos *M_PI/2) / -15));
-
-		}while(!(readBeaconSens())==0 && pos != 0);
+			rotateRel_naive( normalizeAngle ((position *M_PI/2) / -15));
+			//position--;
+			//setServoPos(position);
+		//}while(!(readBeaconSens())==0 && position != 0);
 		
 	}
 	andar_frente();
