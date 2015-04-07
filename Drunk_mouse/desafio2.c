@@ -80,7 +80,7 @@ int main (void)
 		{
 			TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 			Chegada_Farol();
-			if(countCiclos++ >= 50)
+			if(countCiclos++ >= 75)
 			{
 
 				Ver_Farol();
@@ -233,8 +233,8 @@ void Chegada_Farol ()
 {	
 	
 	stop_Motors();
-	int position = -15, count=0, ver=0;
-
+	int position = -15, count=0;
+	static unsigned int lado=0;
 	readAnalogSensors();
 	do{
 		setServoPos(position);
@@ -243,14 +243,25 @@ void Chegada_Farol ()
 	
 		//printf("farol: %d\n", readBeaconSens() );
 		
-		if(position== (15)){
+		if(position== (7)){
 			position= -15;
 			count++;
-			if(count <= 3){
+			if(lado == 0 && count <= 3  ){
+				rotateRel_naive(normalizeAngle(-M_PI/2));
+				printf("lado 0\n");
+				if(count == 3){
+					lado++;
+				}		
+
+			}else if(lado == 1 && count <= 3  ) {
 				rotateRel_naive(normalizeAngle(M_PI/2));
+				printf("lado 1\n");
+				if(count == 3){
+					lado =0;
+				}
 			}
 		}
-		delay(300);
+		delay(500);
 
 	}while(readBeaconSens() ==0  && count < 4);
 
@@ -258,22 +269,16 @@ void Chegada_Farol ()
 	//printf("%d \n", position);
 	if(position < 0 && count < 4){
 		//printf("servo position < 0\n");	
-		//do{ 
+		
 
 			rotateRel_naive(normalizeAngle((position *M_PI/2) / (15) ));
-			//position++;
-			//setServoPos(position);
 			
-		//}while(!(readBeaconSens())==0  && position != 0);
 		
 	}else if(position > 0 && count < 4){
-		//printf("servo position > 0\n");
-		//do{ 
+		//printf("servo position > 0\n");S
 	
 			rotateRel_naive( normalizeAngle ((position *M_PI/2) / -15));
-			//position--;
-			//setServoPos(position);
-		//}while(!(readBeaconSens())==0 && position != 0);
+			
 		
 	}
 	andar_frente();
@@ -307,18 +312,19 @@ void rotateRel_naive(double deltaAngle)
 }
 //#####################################################################################
 /* TimeOut e a funçao que desliga o robot  do fim de 3 min*/
-/* com os 40ms para fazer 3min sa presisos 4500ciclos 
+/* com os 160ms para fazer 3min=180000ms sa presisos 1125ciclos 
 */
 void TimeOut(){
 
 	//int tempo=readCoreTimer();
 	
-		 
+		if(tick160ms==1){
 			ciclos++;
-			printf("read %d \n", ciclos);
-			if(ciclos>=2715){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
-				Fim();
-			}
+		}
+		//printf("read %d \n", ciclos);
+		if(ciclos>=1125){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
+			Fim();
+		}
 			//reset a flag
 		
 }
