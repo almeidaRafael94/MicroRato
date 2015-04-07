@@ -319,6 +319,7 @@ void TimeOut(){
 	//int tempo=readCoreTimer();
 	
 		if(tick160ms==1){
+			tick160ms==0;
 			ciclos++;
 		}
 		//printf("read %d \n", ciclos);
