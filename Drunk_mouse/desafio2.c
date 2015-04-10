@@ -13,12 +13,12 @@
 
 
 volatile int sensor_dir,sensor_esq,sensor_frente; 
-volatile int estado=0;     /* 0 = parado; 1 = Run_Beacon; 2 = Go_Home; 3 = End; 4=Ver_farol */
+volatile int estado=0;     /* 0 = parado; 1 = Run_Beacon; 2 = Go_Home; 3 = End */
 volatile int linha = 0;
 volatile int farolsen = 0;
 volatile int reset = 0;
 int ciclos=0;				//tempo em funcionamento
-int count=0;				//count para procurar o farol
+int count=0; 				//count para o robot ver o farol
 /********************************************/
 // FUNCTIONS
 
@@ -37,7 +37,6 @@ void Run_Beacon(void);
 void Fim(void);  
 void TimeOut(void);
 void rotateRel_naive(double deltaAngle);
-void servo_move(void);
 /********************************************/
 int main (void)
 {
@@ -76,25 +75,19 @@ int main (void)
 			estado = 0;
 			disableObstSens();
 		}
-//################################################
-//estados
-		printf("estado: %d\n", estado );
-		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
-		{
-			Stop_robot();
-		}
+//estaddos
+
 		if(estado == 1) 
 		{
-			TimeOut();						// timeOut 
+			TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 			Chegada_Farol();
 			if(countCiclos++ >= 75)
 			{
 
-				estado=4;
+				estado = 4; 
 				countCiclos = 0;
 			}
 			Run_Beacon();
-			//Sservo_move();
 		}
 
 		if(estado == 2)
@@ -103,19 +96,23 @@ int main (void)
 			Stop_robot();
 		}
 
-		if(estado == 3)
+		if(estado == 3){
 			Fim();
-		if(estado == 4){
-			Ver_Farol();
-			setServoPos(0);
-			if(count++ >= 28){
-				estado=1;
-				count=0;
-			}
 		}
 
-		
+		if(estado == 4){
+			Ver_Farol();
+			if(count++ >= 28){
+				estado = 1;
+				count = 0;
+			}
 
+		}
+
+		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
+		{
+			Stop_robot();
+		}
  	}
   return (0);
 }
@@ -245,23 +242,20 @@ void Chegada_Farol ()
 /*ver se era por causa do while que isto nao alilhava*/
 	void Ver_Farol()
 {	
-	
+	setServoPos(0);
 	stop_Motors();
-	readAnalogSensors();
 	rotateRel_naive(normalizeAngle(0.1));
 
-	if(readBeaconSens() ==1 ){
-		
-		estado=1;
+	printf("farol= %d; count=%d \n", readBeaconSens(), count);
+	if(readBeaconSens() ==1){
+		estado =1;
 	}
 		
-	//printf("farol: %d, count: %d\n", readBeaconSens(), count );
+		
+
+			
 
 	
-	stop_Motors();
-	
-
-
 }
 //###########################################3
 void rotateRel_naive(double deltaAngle)
@@ -290,26 +284,6 @@ void rotateRel_naive(double deltaAngle)
 
 }
 //#####################################################################################
-void servo_move(void){
-#define servo_position 8
-	static int position = servo_position, mode = 0;
-	printf("position: %d\n", position);
-	setServoPos(position);
-	
-	if(mode== 0){
-		position++;
-		if(position==servo_position){
-			mode=1;
-		}
-	}
-	if(mode== 1){
-		position--;
-		if(position== -servo_position){
-			mode=0;
-		}
-	}
-}
-//#####################################################################################
 /* TimeOut e a funçao que desliga o robot  do fim de 3 min*/
 /* com os 160ms para fazer 3min=180000ms sa presisos 1125ciclos 
 */
@@ -323,7 +297,7 @@ void TimeOut(){
 		}
 		//printf("read %d \n", ciclos);
 		if(ciclos>=1125){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
-			estado=3;
+			Fim();
 		}
 			//reset a flag
 		
