@@ -6,6 +6,7 @@
 // VARIABLES
 #define LIMIAR 400
 #define Velocidade 70
+#define Rodar 63
 
 #define TRUE 1
 #define FALSE 0
@@ -13,12 +14,13 @@
 
 
 volatile int sensor_dir,sensor_esq,sensor_frente; 
-volatile int estado=0;     /* 0 = parado; 1 = Run_Beacon; 2 = Go_Home; 3 = End */
+volatile int estado=0;     /* 0 = parado; 1 = Run_Beacon; 2 = ver_farol; 3= Go_home; 4 = End */
 volatile int linha = 0;
 volatile int farolsen = 0;
 volatile int reset = 0;
 int ciclos=0;				//tempo em funcionamento
-int count=0; 				//count para o robot ver o farol
+int countRodarFarol=0; 				//count para o robot ver o farol
+static unsigned lado=0;
 /********************************************/
 // FUNCTIONS
 
@@ -32,7 +34,7 @@ void Rodar_Sobre_Si (void);
 void andar_frente (void);
 void Vira_esq (void);
 void Chegada_Farol (void);
-void Ver_Farol(void);
+void Ver_Farol(int);
 void Run_Beacon(void);
 void Fim(void);  
 void TimeOut(void);
@@ -77,37 +79,52 @@ int main (void)
 		}
 //estaddos
 
-		if(estado == 1) 
-		{
-			TimeOut();						// timeOut => tb devia ir para uma inturrupcao
-			Chegada_Farol();
-			if(countCiclos++ >= 75)
-			{
+		switch(estado){
+			case 0:
+				setVel2(0,0); //stop_Motors();
+				break;
 
-				estado = 4; 
-				countCiclos = 0;
+			case 1:
+			
+				TimeOut();						// timeOut => tb devia ir para uma inturrupcao
+				Chegada_Farol();
+				if(countCiclos++ >= 50)
+				{
+					estado = 2; 
+					countCiclos = 0;
+				}
+				Run_Beacon();
+				break;
+
+			case 2:
+				Ver_Farol(lado);
+				if(countRodarFarol++ >= Rodar){
+					estado = 1;
+					countRodarFarol = 0;
+					if(lado == 0){
+						lado =1;
+					} else if(lado == 1) {
+						lado=0;
+					}
+				}
+				break;
+
+			case 3:
+				leds(0x1);
+				Stop_robot();
+				break;
+
+			case 4:
+				Fim();
+				break;
+
+			default:
+				estado=2;
+				break;
+
 			}
-			Run_Beacon();
-		}
 
-		if(estado == 2)
-		{
-			leds(0x1);
-			Stop_robot();
-		}
-
-		if(estado == 3){
-			Fim();
-		}
-
-		if(estado == 4){
-			Ver_Farol();
-			if(count++ >= 28){
-				estado = 1;
-				count = 0;
-			}
-
-		}
+	
 
 		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
 		{
@@ -228,7 +245,7 @@ void Chegada_Farol ()
 		}	
 		if(detectLine >= 5)
 		{	
-			estado = 2;
+			estado = 3;
 			while(readLineSensors(0) > 5)
 			{		
 				Rodar_Sobre_Si();
@@ -240,20 +257,29 @@ void Chegada_Farol ()
 //####################################################################################################
 /*esta funcao tem de ser alterada pois falta alenhar o servo para quando ele estiver a -15 ou 15 fazer 90 graus com a posicao zero */
 /*ver se era por causa do while que isto nao alilhava*/
-	void Ver_Farol()
+	void Ver_Farol(int virar)
 {	
+	
 	setServoPos(0);
 	stop_Motors();
-	rotateRel_naive(normalizeAngle(0.1));
 
-	printf("farol= %d; count=%d \n", readBeaconSens(), count);
+	if(virar == 0){
+		rotateRel_naive(normalizeAngle(0.1));
+	}else if(virar == 1){
+		rotateRel_naive(normalizeAngle(-0.1));
+	}
+
+	
+
 	if(readBeaconSens() ==1){
 		estado =1;
+	
+		wait(2);	
 	}
-		
+	printf("farol= %d; count=%d ; lado: %d \n", readBeaconSens(), countRodarFarol, lado);
 		
 
-			
+	
 
 	
 }
