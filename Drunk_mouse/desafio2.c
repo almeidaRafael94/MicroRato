@@ -21,16 +21,19 @@ volatile int farolsen = 0;
 volatile int reset = 0;
 int ciclos=0;				//tempo em funcionamento
 int countRodarFarol=0; 				//count para o robot ver o farol
+int countCiclos = 100;		//ciclos para ir ver o farol
 static unsigned lado=0;
 //array de posicao
 double xx [sizeArray];
 double yy [sizeArray];
 double tt [sizeArray];
-int index=0;
+int indexA=0;
 /********************************************/
 // FUNCTIONS
 
-void Stop_robot(void);
+void Stop_robot(void);		//deliga os motores e os sensores de obstaculos
+void stop_Motors(void); 	//para os motores 
+//funcoes para andar
 void Ajusta_Dir(void);
 void Ajusta_Esq(void);
 void Vira_Dir (void);
@@ -39,19 +42,23 @@ void Rodar_Sobre_Si_Dir (void);
 void Rodar_Sobre_Si (void);
 void andar_frente (void);
 void Vira_esq (void);
+void Run_Beacon(void);
+void rotateRel_naive(double deltaAngle);	//virar partir de um anglo em radiano
+//verificacao do farol
 void Chegada_Farol (void);
 void Ver_Farol(int);
-void Run_Beacon(void);
+//tempo de funcionamento
 void Fim(void);  
 void TimeOut(void);
-void rotateRel_naive(double deltaAngle);
+
+//funcoes para voltar para a partida
 void return_Home();
 int storePosition(void);
 int arraySize(void);
 /********************************************/
 int main (void)
 {
-	int countCiclos = 100;
+	
 	//iniciçao da pic
   	initPIC32 ();
   	closedLoopControl( true );
@@ -87,7 +94,7 @@ int main (void)
 			disableObstSens();
 		}
 //estaddos
-
+			printf("%d\n", estado);
 		switch(estado){
 			case 0:				
 				setVel2(0,0); //stop_Motors();
@@ -96,7 +103,10 @@ int main (void)
 			case 1:
 			/*Ida para o farol*/
 			
-				TimeOut();						// timeOut => tb devia ir para uma inturrupcao
+				TimeOut();					// timeOut => tb devia ir para uma inturrupcao
+				if(ciclos=1){
+					storePosition();  
+				}
 				Chegada_Farol();
 				if(countCiclos++ >= 30)
 				{
@@ -134,12 +144,15 @@ int main (void)
 				Fim();
 				break;
 			case 5:
-				leds(0x7);
-				Stop_robot;
+			/*Chegada a casa*/
+				leds(0x6);
+				TimeOut();
+				stop_Motors();
 				break;
 			default:
 			/*estado de seguranca, em caso do robot se passe*/
 				estado=2;
+				leds(0x8);
 				break;
 
 			}
@@ -159,7 +172,7 @@ int main (void)
 void Stop_robot()  //serve para quando se carrega no botao de desligar
 {
 	setVel2(0,0);		// desliga os metores
-	estado = 0;
+	disableObstSens();
 }
 //################
 void Ajusta_Esq ()
@@ -201,11 +214,28 @@ void Rodar_Sobre_Si()
 }
 int randomDecisionRotate()
 {
-	int value = rand()%10;
-	if(value <= 5)
+
+	if((obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR)  &&  // parede LEFT
+	    (obstacleSensor(OBST_SENSOR_LEFT) > LIMIAR) && 
+	    (obstacleSensor(OBST_SENSOR_RIGHT) < LIMIAR))
+	{
 		return 0;
-	else
+	}
+	else if((obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR) &&  // parede 	Right
+			(obstacleSensor(OBST_SENSOR_RIGHT) > LIMIAR) && 
+	    	(obstacleSensor(OBST_SENSOR_LEFT) < LIMIAR))
+	{
 		return 1;
+		
+	}
+	else
+	{
+		int value = rand()%10;
+		if(value <= 5)
+			return 0;
+		else
+			return 1;
+	}
 }
 void stop_Motors()
 {
@@ -215,7 +245,7 @@ void stop_Motors()
 //#############################################################################
 void Run_Beacon ()
 {
-	disableObstSens();
+	//disableObstSens();
 	enableObstSens();
 	if(obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR)
 	{	
@@ -336,7 +366,7 @@ void rotateRel_naive(double deltaAngle)
 void TimeOut(){
 
 	//int tempo=readCoreTimer();
-	printf("%d\n", ciclos );
+	//printf("%d\n", ciclos );
 			ciclos++;
 		
 		//printf("read %d \n", ciclos);
@@ -350,7 +380,7 @@ void TimeOut(){
 *Para isso os led devem permanecer intermitente, com uma frequência compreendida entre 1 e 5 Hz*/
 void Fim(){
 
-	Stop_robot();
+	stop_Motors();
 	
 	//esta a frequencia 1hz
 	while(TRUE){
@@ -372,15 +402,16 @@ void return_Home()
 
 			getRobotPos(&x, &y, &t);
 			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
-			if (t != 0)
+			if (t != tt[0])
 			{
-				rotateRel_naive(0);
+				rotateRel_naive(normalizeAngle(2*PI-tt[0]));
+			
 				Run_Beacon();
 			}
 
 			if ((x <= abs(xx[0]+2)) && (y <= abs(yy[0]+2)))
 			{
-				estado = 4; // PARAR, chegei a casa
+				estado = 5; // PARAR, chegei a casa
 			}
 
 }
@@ -393,22 +424,22 @@ int storePosition(void)
 
 	if(estado != 0 && estado != 69)
 	{
-		if (index <= arraySize())
+		if (indexA <= arraySize())
 		{
 			getRobotPos(&x, &y, &t); //printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 
-			xx[index] = x;
-			yy[index] = y;
-			tt[index] = t; // Store values
+			xx[indexA] = x;
+			yy[indexA] = y;
+			tt[indexA] = t; // Store values
 
-			//printf("index = %d\n", index);
+			//printf("indexA = %d\n", indexA);
 			//printf("Size: %d\n", arraySize());
-			index++;
+			indexA++;
 			return 0;	
 		}
 		else
 		{
-			printf("Array cheio!! \n");
+			//printf("Array cheio!! \n");
 			//printArrayPos();
 			//arrayCheio = 1;
 			return 1;
