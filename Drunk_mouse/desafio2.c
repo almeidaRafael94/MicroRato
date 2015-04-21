@@ -11,6 +11,7 @@
 #define TRUE 1
 #define FALSE 0
 
+#define sizeArray 4500
 
 
 volatile int sensor_dir,sensor_esq,sensor_frente; 
@@ -21,6 +22,11 @@ volatile int reset = 0;
 int ciclos=0;				//tempo em funcionamento
 int countRodarFarol=0; 				//count para o robot ver o farol
 static unsigned lado=0;
+//array de posicao
+double xx [sizeArray];
+double yy [sizeArray];
+double tt [sizeArray];
+int index=0;
 /********************************************/
 // FUNCTIONS
 
@@ -39,6 +45,9 @@ void Run_Beacon(void);
 void Fim(void);  
 void TimeOut(void);
 void rotateRel_naive(double deltaAngle);
+void return_Home();
+int storePosition(void);
+int arraySize(void);
 /********************************************/
 int main (void)
 {
@@ -80,15 +89,16 @@ int main (void)
 //estaddos
 
 		switch(estado){
-			case 0:
+			case 0:				
 				setVel2(0,0); //stop_Motors();
 				break;
 
 			case 1:
+			/*Ida para o farol*/
 			
 				TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 				Chegada_Farol();
-				if(countCiclos++ >= 50)
+				if(countCiclos++ >= 30)
 				{
 					estado = 2; 
 					countCiclos = 0;
@@ -97,6 +107,8 @@ int main (void)
 				break;
 
 			case 2:
+			/*procura do farol*/
+				TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 				Ver_Farol(lado);
 				if(countRodarFarol++ >= Rodar){
 					estado = 1;
@@ -110,15 +122,23 @@ int main (void)
 				break;
 
 			case 3:
+				/*estado atciva depois de chegar ao farol. 
+				volta para o ponto de partida*/
 				leds(0x1);
-				Stop_robot();
+				TimeOut();
+				return_Home();
 				break;
 
 			case 4:
+			/*timeOut: desliga os motores e os leds piscam ao fim de 3 min*/
 				Fim();
 				break;
-
+			case 5:
+				leds(0x7);
+				Stop_robot;
+				break;
 			default:
+			/*estado de seguranca, em caso do robot se passe*/
 				estado=2;
 				break;
 
@@ -276,7 +296,7 @@ void Chegada_Farol ()
 	
 		wait(2);	
 	}
-	printf("farol= %d; count=%d ; lado: %d \n", readBeaconSens(), countRodarFarol, lado);
+	//printf("farol= %d; count=%d ; lado: %d \n", readBeaconSens(), countRodarFarol, lado);
 		
 
 	
@@ -311,19 +331,17 @@ void rotateRel_naive(double deltaAngle)
 }
 //#####################################################################################
 /* TimeOut e a funçao que desliga o robot  do fim de 3 min*/
-/* com os 160ms para fazer 3min=180000ms sa presisos 1125ciclos 
+/* com os 40ms para fazer 3min=180000ms sa presisos 4500ciclos 
 */
 void TimeOut(){
 
 	//int tempo=readCoreTimer();
-	
-		if(tick160ms==1){
-			tick160ms==0;
+	printf("%d\n", ciclos );
 			ciclos++;
-		}
+		
 		//printf("read %d \n", ciclos);
-		if(ciclos>=1125){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
-			Fim();
+		if(ciclos>=4500){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
+			estado =4;
 		}
 			//reset a flag
 		
@@ -342,4 +360,64 @@ void Fim(){
 		leds(0x0);
 		wait(5);
 	}
+}
+//################################################################################################
+void return_Home()
+{
+	//Run_Beacon();
+
+	double x, y, t;
+
+			//Run_Beacon();
+
+			getRobotPos(&x, &y, &t);
+			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
+			if (t != 0)
+			{
+				rotateRel_naive(0);
+				Run_Beacon();
+			}
+
+			if ((x <= abs(xx[0]+2)) && (y <= abs(yy[0]+2)))
+			{
+				estado = 4; // PARAR, chegei a casa
+			}
+
+}
+
+int storePosition(void)
+{
+	double x, y, t;
+	//while(!tick40ms);
+	//tick40ms = 0;
+
+	if(estado != 0 && estado != 69)
+	{
+		if (index <= arraySize())
+		{
+			getRobotPos(&x, &y, &t); //printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
+
+			xx[index] = x;
+			yy[index] = y;
+			tt[index] = t; // Store values
+
+			//printf("index = %d\n", index);
+			//printf("Size: %d\n", arraySize());
+			index++;
+			return 0;	
+		}
+		else
+		{
+			printf("Array cheio!! \n");
+			//printArrayPos();
+			//arrayCheio = 1;
+			return 1;
+		}
+	}
+
+}
+
+int arraySize(void)
+{
+	return (sizeof(xx)/sizeof(double*)/2);
 }
