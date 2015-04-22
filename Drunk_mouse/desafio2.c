@@ -28,6 +28,7 @@ double xx [sizeArray];
 double yy [sizeArray];
 double tt [sizeArray];
 int indexA=0;
+int test=0;
 /********************************************/
 // FUNCTIONS
 
@@ -94,7 +95,7 @@ int main (void)
 			disableObstSens();
 		}
 //estaddos
-			printf("%d\n", estado);
+		//	printf("%d\n", estado);
 		switch(estado){
 			case 0:				
 				setVel2(0,0); //stop_Motors();
@@ -104,11 +105,10 @@ int main (void)
 			/*Ida para o farol*/
 			
 				TimeOut();					// timeOut => tb devia ir para uma inturrupcao
-				if(ciclos=1){
-					storePosition();  
-				}
+				
+				storePosition();  
 				Chegada_Farol();
-				if(countCiclos++ >= 30)
+				if(countCiclos++ >= 40)
 				{
 					estado = 2; 
 					countCiclos = 0;
@@ -370,7 +370,7 @@ void TimeOut(){
 			ciclos++;
 		
 		//printf("read %d \n", ciclos);
-		if(ciclos>=4500){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
+		if(ciclos>=1000){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
 			estado =4;
 		}
 			//reset a flag
@@ -404,9 +404,12 @@ void return_Home()
 			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 			if (t != tt[0])
 			{
-				rotateRel_naive(normalizeAngle(2*PI-tt[0]));
+				if(test++==10){
+					rotateRel_naive(normalizeAngle(t));
+				}
 			
 				Run_Beacon();
+				
 			}
 
 			if ((x <= abs(xx[0]+2)) && (y <= abs(yy[0]+2)))
@@ -431,7 +434,7 @@ int storePosition(void)
 			xx[indexA] = x;
 			yy[indexA] = y;
 			tt[indexA] = t; // Store values
-
+			printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 			//printf("indexA = %d\n", indexA);
 			//printf("Size: %d\n", arraySize());
 			indexA++;
