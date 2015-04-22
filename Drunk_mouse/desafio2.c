@@ -29,6 +29,7 @@ double yy [sizeArray];
 double tt [sizeArray];
 int indexA=0;
 int test=0;
+int stateRondomDecision = 0;
 /********************************************/
 // FUNCTIONS
 
@@ -76,6 +77,7 @@ int main (void)
 	enableObstSens();
 	while(1)
 	{	
+		printf("%d\n", ciclos );
 		while(!tick40ms);
 		tick40ms=0;
 		readAnalogSensors();
@@ -157,8 +159,6 @@ int main (void)
 
 			}
 
-	
-
 		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
 		{
 			Stop_robot();
@@ -230,11 +230,16 @@ int randomDecisionRotate()
 	}
 	else
 	{
-		int value = rand()%10;
-		if(value <= 5)
+		if(stateRondomDecision == 0)
+		{	
+			stateRondomDecision = 1;
 			return 0;
+		}
 		else
+		{	
+			stateRondomDecision = 0;
 			return 1;
+		}
 	}
 }
 void stop_Motors()
@@ -296,11 +301,6 @@ void Chegada_Farol ()
 		if(detectLine >= 5)
 		{	
 			estado = 3;
-			while(readLineSensors(0) > 5)
-			{		
-				Rodar_Sobre_Si();
-			}
-			
 		}
 	}
 }
@@ -327,11 +327,7 @@ void Chegada_Farol ()
 		wait(2);	
 	}
 	//printf("farol= %d; count=%d ; lado: %d \n", readBeaconSens(), countRodarFarol, lado);
-		
 
-	
-
-	
 }
 //###########################################3
 void rotateRel_naive(double deltaAngle)
@@ -434,7 +430,7 @@ int storePosition(void)
 			xx[indexA] = x;
 			yy[indexA] = y;
 			tt[indexA] = t; // Store values
-			printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
+			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 			//printf("indexA = %d\n", indexA);
 			//printf("Size: %d\n", arraySize());
 			indexA++;
