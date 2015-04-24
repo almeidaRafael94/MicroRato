@@ -30,6 +30,8 @@ double tt [sizeArray];
 int indexA=0;
 int test=0;
 int stateRondomDecision = 0;
+int stop = 0;
+int indexInvert = 0;
 /********************************************/
 // FUNCTIONS
 
@@ -60,7 +62,7 @@ int arraySize(void);
 /********************************************/
 int main (void)
 {
-	
+	indexInvert = indexA;
 	//iniciçao da pic
   	initPIC32 ();
   	closedLoopControl( true );
@@ -161,7 +163,9 @@ int main (void)
 
 		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
 		{
-			Stop_robot();
+			stop = 1;
+			if(stop == 1)
+				Stop_robot();
 		}
  	}
   return (0);
@@ -366,10 +370,11 @@ void TimeOut(){
 			ciclos++;
 		
 		//printf("read %d \n", ciclos);
-		if(ciclos>=1000){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
+		if(ciclos>=500){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
 			estado =4;
 		}
-			//reset a flag
+			//reset a flag-0.007673
+
 		
 }
 /* esta funçao serve para mostrar que robô dê a sua prova por concluída, tendo ou não atingido objetivo.
@@ -379,6 +384,11 @@ void Fim(){
 	stop_Motors();
 	
 	//esta a frequencia 1hz
+	int x = 0;
+	for(x = 0; x < 300; x++)
+	{
+		printf("%f, %f, %f\n", xx[x],yy[x], tt[x]);
+	}
 	while(TRUE){
 		printStr("TimeOut\n");
 		leds(0xF);
@@ -400,8 +410,10 @@ void return_Home()
 			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 			if (t != tt[0])
 			{
-				if(test++==10){
-					rotateRel_naive(normalizeAngle(t));
+				if(test++==40){
+					rotateRel_naive(normalizeAngle(PI-tt[indexInvert--]));
+					test = 0;
+					printf("%s\n", "AJUSTA ANGULO PARA A BASE" );
 				}
 			
 				Run_Beacon();
@@ -412,7 +424,6 @@ void return_Home()
 			{
 				estado = 5; // PARAR, chegei a casa
 			}
-
 }
 
 int storePosition(void)
@@ -421,7 +432,7 @@ int storePosition(void)
 	//while(!tick40ms);
 	//tick40ms = 0;
 
-	if(estado != 0 && estado != 69)
+	if(estado != 0 && estado != 69)	// se estado = 3 não guarda as posições
 	{
 		if (indexA <= arraySize())
 		{
