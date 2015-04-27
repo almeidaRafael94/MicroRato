@@ -10,11 +10,16 @@ fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 ---
 ####Pastas:
 -Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
-   .MR32 - Biblioteca de funções para o robô DETI
-   .Programa exemplo
-   .Programa para calibração do servo
--Drunk_Mouse2 -  do codigo para este ano
--Test_code - codigo antigo 
+	>MR32 - Biblioteca de funções para o robô DETI
+	>Programa exemplo
+	>Programa para calibração do servo
+-Drunk_Mouse -  do codigo de este ano(desafio2.c)
+-Drunk_Mouse2 -  do codigo de teste para este ano
+-ida_volta_opt - backup do codigo opracional
+-aqquivo_morto
+	>Test_code - codigo antigo(ano passado)
+	>buscaFarol_opt -  backup
+	>ida_opt_volta_mal -  backup
 
 
 ---
@@ -26,10 +31,7 @@ This README would normally document whatever steps are necessary to get your app
 
 
 
----
-### Atenção o mr32 fui totalmente aterado pelo prof.
 
-fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 
 
 

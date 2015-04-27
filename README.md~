@@ -2,17 +2,20 @@
 ================
 
 ##o nosso Robot e o 11
-####Pasta
-** Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
-*MR32 - Biblioteca de funções para o robô DETI
-*Programa exemplo
-*Programa para calibração do servo
+---
+### Atenção o mr32 fui totalmente aterado pelo prof.
 
-**Drunk_Mouse2 -  do codigo para este ano
-**test_code - codigo antigo 
-####Pasta
+fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 
-	
+---
+####Pastas:
+-Deps e a pasta do com o programa da pag, do jla (http://sweet.ua.pt/jla/)
+   .MR32 - Biblioteca de funções para o robô DETI
+   .Programa exemplo
+   .Programa para calibração do servo
+-Drunk_Mouse2 -  do codigo para este ano
+-Test_code - codigo antigo 
+
 
 ---
 This README would normally document whatever steps are necessary to get your application up and running.
@@ -58,3 +61,6 @@ Learn the Git basics of stage, commit, push when you make a change to the 'sampl
     
 **8.** Enter your Bitbucket account name and the password.
 **9.** After the push completes, click **Commits**, in Bitbucket, to view your change.
+
+---
+use "git pull" to update your local branch
