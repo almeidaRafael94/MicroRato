@@ -15,7 +15,7 @@ fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 >
 >Programa exemplo
 >
->Programa para calibração do servo 
+>competicao_2015
 
 *Drunk_Mouse -  do codigo de este ano(desafio2.c). 
 
@@ -23,10 +23,11 @@ fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 
 *Ida_volta_opt - backup do codigo opracional.
 
-*Aqquivo_morto. 
-> buscaFarol_opt -  backup 
-> 
-> ida_opt_volta_mal -  backup 
+*Aqquivo_morto.
+
+** buscaFarol_opt -  backup 
+
+** ida_opt_volta_mal -  backup 
 
 
 

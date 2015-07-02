@@ -47,7 +47,6 @@ void Rodar_Sobre_Si (void);
 void andar_frente (void);
 void Vira_esq (void);
 void Run_Beacon(void);
-void ANDAR2 ();
 void rotateRel_naive(double deltaAngle);	//virar partir de um anglo em radiano
 //verificacao do farol
 void Chegada_Farol (void);
@@ -90,7 +89,6 @@ int main (void)
 		if(startButton() == 1) 				// Botao start(preto) primido
 		{
 			estado = 1;
-			enableObstSens();
 			leds(0x0);						//leds off
 			countCiclos = 100;
 		}
@@ -101,7 +99,7 @@ int main (void)
 			disableObstSens();
 		}
 //estaddos
-			//printf("%d\n", estado);
+			printf("%d\n", estado);
 		switch(estado){
 			case 0:				
 				setVel2(0,0); //stop_Motors();
@@ -258,7 +256,7 @@ void stop_Motors()
 void Run_Beacon ()
 {
 	//disableObstSens();
-	
+	enableObstSens();
 	if(obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR)
 	{	
 		stop_Motors();
@@ -414,21 +412,20 @@ void return_Home()
 			if (t != tt[0])
 			{
 				if(test++==20){
-					rotateRel_naive(( PI-normalizeAngle(t)));//t[indexInvert--]));
+					rotateRel_naive(normalizeAngle(PI-t));//t[indexInvert--]));
 					test = 0;
-				//	printf("%s\n", "AJUSTA ANGULO PARA A BASE" );
+					printf("%s\n", "AJUSTA ANGULO PARA A BASE" );
 				}
 			
-				ANDAR2();
+				Run_Beacon();
 				
 			}
-			
 			if(readLineSensors(0) >= 5)
 			{	
 				rotateRel_naive(normalizeAngle(PI));
 			}
 
-			if ((x <= abs(xx[0]+20)) && (y <= abs(yy[0]+20)))
+			if ((x <= abs(xx[0]+2)) && (y <= abs(yy[0]+2)))
 			{
 				estado = 5; // PARAR, chegei a casa
 			}
@@ -469,35 +466,4 @@ int storePosition(void)
 int arraySize(void)
 {
 	return (sizeof(xx)/sizeof(double*)/2);
-}
-
-
-//#####
-void ANDAR2 ()
-{
-	if(obstacleSensor(OBST_SENSOR_RIGHT) < LIMIAR)
-	{
-		Vira_Dir();
-		
-	}
-	if(obstacleSensor(OBST_SENSOR_LEFT) > LIMIAR)
-	{
-		Vira_esq();
-		
-	}
-	if(obstacleSensor(OBST_SENSOR_FRONT) < LIMIAR && obstacleSensor(OBST_SENSOR_RIGHT) < LIMIAR&& obstacleSensor(OBST_SENSOR_LEFT) < LIMIAR)
-	{	
-		andar_frente();
-	}
-	if(obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR && obstacleSensor(OBST_SENSOR_RIGHT) > LIMIAR && obstacleSensor(OBST_SENSOR_LEFT) > LIMIAR)
-	{	
-		setVel2(0,0);
-		
-		Rodar_Sobre_Si();
-		wait(1);
-
-	
-	}
-	
-
 }

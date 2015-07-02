@@ -12,6 +12,7 @@
 #define FALSE 0
 
 #define sizeArray 4500
+#define Tempo_Fim 1500
 
 
 volatile int sensor_dir,sensor_esq,sensor_frente; 
@@ -32,6 +33,9 @@ int test=0;
 int stateRondomDecision = 0;
 int stop = 0;
 int indexInvert = 0;
+int counterFarol = 0;
+double anguloInicial = 0;
+int detectLine = 0;
 /********************************************/
 // FUNCTIONS
 
@@ -47,12 +51,13 @@ void Rodar_Sobre_Si (void);
 void andar_frente (void);
 void Vira_esq (void);
 void Run_Beacon(void);
+void ANDAR2 ();
 void rotateRel_naive(double deltaAngle);	//virar partir de um anglo em radiano
 //verificacao do farol
 void Chegada_Farol (void);
 void Ver_Farol(int);
 //tempo de funcionamento
-void Fim(void);  
+void Fim(int);  
 void TimeOut(void);
 
 //funcoes para voltar para a partida
@@ -76,7 +81,6 @@ int main (void)
 
 	}
 	printStr("\n");
-	enableObstSens();
 	while(1)
 	{	
 		//printf("%d\n", ciclos );
@@ -89,6 +93,7 @@ int main (void)
 		if(startButton() == 1) 				// Botao start(preto) primido
 		{
 			estado = 1;
+			enableObstSens();
 			leds(0x0);						//leds off
 			countCiclos = 100;
 		}
@@ -99,20 +104,21 @@ int main (void)
 			disableObstSens();
 		}
 //estaddos
-			printf("%d\n", estado);
+			//printf("%d\n", estado);
 		switch(estado){
 			case 0:				
 				setVel2(0,0); //stop_Motors();
+				disableObstSens();
 				break;
 
 			case 1:
 			/*Ida para o farol*/
-			
+				
 				TimeOut();					// timeOut => tb devia ir para uma inturrupcao
 				
 				storePosition();  
 				Chegada_Farol();
-				if(countCiclos++ >= 40)
+				if(countCiclos++ >= 100)
 				{
 					estado = 2; 
 					countCiclos = 0;
@@ -124,6 +130,7 @@ int main (void)
 			/*procura do farol*/
 				TimeOut();						// timeOut => tb devia ir para uma inturrupcao
 				Ver_Farol(lado);
+
 				if(countRodarFarol++ >= Rodar){
 					estado = 1;
 					countRodarFarol = 0;
@@ -145,23 +152,25 @@ int main (void)
 
 			case 4:
 			/*timeOut: desliga os motores e os leds piscam ao fim de 3 min*/
-				Fim();
+				Fim(2);
 				break;
 			case 5:
 			/*Chegada a casa*/
-				leds(0x6);
+				//leds(0x6); SERXDCTGFVMKLÇ;
 				TimeOut();
 				stop_Motors();
+				Fim(1);
+				estado = 5;
 				break;
 			default:
 			/*estado de seguranca, em caso do robot se passe*/
 				estado=2;
-				leds(0x8);
+				leds(0x7);
 				break;
 
 			}
 
-		if(stopButton() == 1 || estado == 0)		// deslica o funcionamento, nenhum led activo
+		if(stopButton() == 1)		// deslica o funcionamento, nenhum led activo
 		{
 			stop = 1;
 			if(stop == 1)
@@ -255,7 +264,7 @@ void stop_Motors()
 void Run_Beacon ()
 {
 	//disableObstSens();
-	enableObstSens();
+	
 	if(obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR)
 	{	
 		stop_Motors();
@@ -294,12 +303,13 @@ void Run_Beacon ()
 //###################################################################################
 void Chegada_Farol ()
 {	
-	int detectLine = 0;
+	detectLine=0;
+
+	
 	if( readLineSensors(0) > 5)
 	{		
 		while(readLineSensors(0) > 10 && detectLine <= 5)
 		{	
-		
 			detectLine ++;
 		}	
 		if(detectLine >= 5)
@@ -313,7 +323,13 @@ void Chegada_Farol ()
 /*ver se era por causa do while que isto nao alilhava*/
 	void Ver_Farol(int virar)
 {	
-	
+	if(counterFarol == 0)
+	{
+		double x,y,t;
+		getRobotPos(&x,&y,&t);
+		anguloInicial = t;
+	}
+
 	setServoPos(0);
 	stop_Motors();
 
@@ -327,7 +343,8 @@ void Chegada_Farol ()
 
 	if(readBeaconSens() ==1){
 		estado =1;
-	
+		countRodarFarol=0;
+		stop_Motors();
 		//wait(2);	
 	}
 	//printf("farol= %d; count=%d ; lado: %d \n", readBeaconSens(), countRodarFarol, lado);
@@ -336,6 +353,7 @@ void Chegada_Farol ()
 //###########################################3
 void rotateRel_naive(double deltaAngle)
 {
+	setVel2(0, 0);
 	double x, y, t;
 	double targetAngle;
 	double error;
@@ -370,8 +388,9 @@ void TimeOut(){
 			ciclos++;
 		
 		//printf("read %d \n", ciclos);
-		if(ciclos>=500){		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
-			estado =4;
+		if(ciclos>=Tempo_Fim)
+		{		//falta ver o valor certo, mas ja funciona(so no dia da competicao)
+			estado = 4;
 		}
 			//reset a flag-0.007673
 
@@ -379,22 +398,16 @@ void TimeOut(){
 }
 /* esta funçao serve para mostrar que robô dê a sua prova por concluída, tendo ou não atingido objetivo.
 *Para isso os led devem permanecer intermitente, com uma frequência compreendida entre 1 e 5 Hz*/
-void Fim(){
+void Fim(int blink){
 
 	stop_Motors();
 	
-	//esta a frequencia 1hz
-	int x = 0;
-	for(x = 0; x < 300; x++)
-	{
-		printf("%f, %f, %f\n", xx[x],yy[x], tt[x]);
-	}
 	while(TRUE){
 		printStr("TimeOut\n");
 		leds(0xF);
-		wait(5);
+		wait(blink);
 		leds(0x0);
-		wait(5);
+		wait(blink);
 	}
 }
 //################################################################################################
@@ -404,27 +417,40 @@ void return_Home()
 
 	double x, y, t;
 
-			//Run_Beacon();
+			Run_Beacon();
 
 			getRobotPos(&x, &y, &t);
+
 			//printf("x:%f  y:%f  TETA:%f\n", x, y, t); // print Position
 			if (t != tt[0])
 			{
-				if(test++==20){
-					rotateRel_naive(normalizeAngle(PI-t));//t[indexInvert--]));
+				if(test++==20)
+				{
+
+					double parteCima = xx[1]*x+yy[1]*y;
+					double partebaixo1 = sqrt((xx[1]*xx[1])+(yy[1]*yy[1]));
+					double baixo2 = sqrt((x*x)+(y*y));
+
+					double angulo_virar = acos((parteCima)/(partebaixo1*baixo2));
+	
+					//printf(" ANGULO A VIRAR PUTINHA: %f \n anguloInicial: %f \n Angulo actual: %f \n POSIÇÂO (%f;%f)", angulo_virar, anguloInicial, normalizeAngle(t), x, y);
+
+					rotateRel_naive(PI + (normalizeAngle(t)-normalizeAngle(angulo_virar)));//t[indexInvert--]));
 					test = 0;
-					printf("%s\n", "AJUSTA ANGULO PARA A BASE" );
+				//	printf("%s\n", "AJUSTA ANGULO PARA A BASE" );
 				}
 			
+				//ANDAR2();
 				Run_Beacon();
 				
 			}
+			
 			if(readLineSensors(0) >= 5)
 			{	
 				rotateRel_naive(normalizeAngle(PI));
 			}
 
-			if ((x <= abs(xx[0]+2)) && (y <= abs(yy[0]+2)))
+			if ((x <= abs(xx[0]+20)) && (y <= abs(yy[0]+20)))
 			{
 				estado = 5; // PARAR, chegei a casa
 			}
@@ -436,7 +462,7 @@ int storePosition(void)
 	//while(!tick40ms);
 	//tick40ms = 0;
 
-	if(estado != 0 && estado != 69)	// se estado = 3 não guarda as posições
+	if(estado != 3)	// se estado = 3 não guarda as posições
 	{
 		if (indexA <= arraySize())
 		{
@@ -465,4 +491,35 @@ int storePosition(void)
 int arraySize(void)
 {
 	return (sizeof(xx)/sizeof(double*)/2);
+}
+
+
+//#####
+void ANDAR2 ()
+{
+	if(obstacleSensor(OBST_SENSOR_RIGHT) < LIMIAR)
+	{
+		Vira_Dir();
+		
+	}
+	if(obstacleSensor(OBST_SENSOR_LEFT) > LIMIAR)
+	{
+		Vira_esq();
+		
+	}
+	if(obstacleSensor(OBST_SENSOR_FRONT) < LIMIAR && obstacleSensor(OBST_SENSOR_RIGHT) < LIMIAR&& obstacleSensor(OBST_SENSOR_LEFT) < LIMIAR)
+	{	
+		andar_frente();
+	}
+	if(obstacleSensor(OBST_SENSOR_FRONT) > LIMIAR && obstacleSensor(OBST_SENSOR_RIGHT) > LIMIAR && obstacleSensor(OBST_SENSOR_LEFT) > LIMIAR)
+	{	
+		setVel2(0,0);
+		
+		Rodar_Sobre_Si();
+		wait(1);
+
+	
+	}
+	
+
 }
