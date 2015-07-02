@@ -15,19 +15,21 @@ fui criada uma pasta para começarmos a trabalhar com esta nova biblioteca
 >
 >Programa exemplo
 >
->competicao_2015
 
-*Drunk_Mouse -  do codigo de este ano(desafio2.c). 
 
-*Drunk_Mouse2 -  do codigo de teste para este ano.
+*competicao_2015
 
-*Ida_volta_opt - backup do codigo opracional.
-
-*Aqquivo_morto.
-
-** buscaFarol_opt -  backup 
-
-** ida_opt_volta_mal -  backup 
+>Drunk_Mouse -  do codigo de este ano(desafio2.c). 
+>
+>Drunk_Mouse2 -  do codigo de teste para este ano.
+>
+>Ida_volta_opt - backup do codigo opracional.
+>
+>Aqquivo_morto.
+>>
+>> buscaFarol_opt -  backup 
+>>
+>> ida_opt_volta_mal -  backup 
 
 
 
